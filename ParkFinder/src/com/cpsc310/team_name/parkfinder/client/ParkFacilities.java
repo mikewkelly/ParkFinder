@@ -17,9 +17,11 @@ public class ParkFacilities implements Serializable {
 		parkId = anId;
 	}
 	
-	public void setFacilityCount(int count) {
-		facilityCount = count;
-	}
+	// this method is unnecessary since count gets increased/decreased only by
+	// adding/removing methods 
+	//public void setFacilityCount(int count) {
+	//	facilityCount = count;
+	//}
 	
 	public int getParkId() {
 		return parkId;
@@ -35,14 +37,25 @@ public class ParkFacilities implements Serializable {
 	
 	public void addFacility(Facility theFacility) {
 		facilities.add(theFacility);
+		facilityCount++;
 	}
 	
 	public void removeFacility(Facility theFacility) {
-		// TODO
+		for(int i=0;i<facilities.size();i++) {
+			if(facilities.get(i).getFacilityType().equals(theFacility.getFacilityType())) {
+				facilities.remove(i);
+				facilityCount--;
+			}
+		}
 	}
 	
-	public void containsFacility(Facility theFacility) {
-		// TODO
+	public boolean containsFacility(Facility theFacility) {
+		for(Facility f:facilities) {
+			if(f.getFacilityType().equals(theFacility.getFacilityType())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 
