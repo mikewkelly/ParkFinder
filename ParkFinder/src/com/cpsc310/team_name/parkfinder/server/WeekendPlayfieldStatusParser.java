@@ -64,7 +64,7 @@ public class WeekendPlayfieldStatusParser {
 	}
 
 	/**
-	 * Called to parse an XML String and create individual Park instances with
+	 * Called to parse an XML String and create ParkFacilities and ParkAreas instances with
 	 * the data
 	 * 
 	 * @param file
@@ -72,6 +72,7 @@ public class WeekendPlayfieldStatusParser {
 	 */
 	private void parseXML(String file) {
 		// TODO: Complete this method
+	
 	}
 
 }

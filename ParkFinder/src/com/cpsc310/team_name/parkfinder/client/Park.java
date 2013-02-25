@@ -7,6 +7,7 @@ public class Park implements Serializable{
 	private int parkId;
 	private String name;
 	private int streetNumber;
+	private String streetName;
 	private LatLong googleMapDest;
 	private String neighbourhoodName;
 	private ParkFacilities parkFacilities;
@@ -26,6 +27,10 @@ public class Park implements Serializable{
 	
 	public int getStreetNumber() {
 		return streetNumber;
+	}
+	
+	public String getStreetName() {
+		return streetName;
 	}
 	
 	public LatLong getGoogleMapDest() {
@@ -56,6 +61,10 @@ public class Park implements Serializable{
 	
 	public void setStreetNumber(int theNumber) {
 		streetNumber = theNumber;
+	}
+	
+	public void setStreetName(String theName) {
+		streetName = theName;
 	}
 	
 	public void setGoogleMapDest(LatLong theGMD) {

@@ -27,6 +27,5 @@ public class LatLong implements Serializable {
 		longitude = theLong;
 	}
 	
-	
-
 }
+

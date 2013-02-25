@@ -6,29 +6,23 @@ import java.util.ArrayList;
 public class ParkFacilities implements Serializable {
 	
 	private int parkId;
-	private int facilityCount;
 	private ArrayList<Facility> facilities;
 	
-	public ParkFacilities(int id) {
+	public ParkFacilities(int id, ArrayList<Facility> theFacilities) {
 		parkId = id;
+		facilities = theFacilities;
 	}
 	
 	public void setParkId(int anId) {
 		parkId = anId;
 	}
 	
-	public void setFacilityCount(int count) {
-		facilityCount = count;
-	}
 	
 	public int getParkId() {
 		return parkId;
 	}
 	
-	public int getFacilityCount() {
-		return facilityCount;
-	}
-	
+
 	public ArrayList<Facility> getFacilities() {
 		return facilities;
 	}
