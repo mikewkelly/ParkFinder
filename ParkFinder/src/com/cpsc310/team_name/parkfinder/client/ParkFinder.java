@@ -11,7 +11,9 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -21,6 +23,17 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class ParkFinder implements EntryPoint {
+	
+	private FlexTable parkTable = new FlexTable();
+	private HorizontalPanel addPanel = new HorizontalPanel();
+	private VerticalPanel mainPanel = new VerticalPanel();
+	private TextBox searchCriteriaTextBox = new TextBox();
+	private Button displayAll = new Button("DisplayAll");
+	private Button search = new Button("Search");
+	private Label lastUpdateLabel = new Label();
+	
+	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
+	
 	/**
 	 * The message displayed to the user when the server cannot be reached or
 	 * returns an error.
@@ -149,4 +162,69 @@ public class ParkFinder implements EntryPoint {
 		sendButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
 	}
+	
+	public void loadParkTable() {
+		// table layout
+		parkTable.setText(0,0,"Park ID");
+		parkTable.setText(0,1,"Park Name");
+		parkTable.setText(0,2,"Neighbourhood");
+		parkTable.setText(0,3,"Street Number");
+		parkTable.setText(0,4,"GoogleMapDest");
+		parkTable.setText(0,5,"Facilities");
+		parkTable.setText(0,6,"Area");
+		
+		// used for future implementation on searching
+		addPanel.add(searchCriteriaTextBox);
+		addPanel.add(search);
+		addPanel.add(displayAll);
+		
+		mainPanel.add(parkTable);
+		mainPanel.add(addPanel);
+		mainPanel.add(lastUpdateLabel);
+		
+		RootPanel.get("parkList").add(mainPanel);
+		
+		searchCriteriaTextBox.setFocus(true);
+		
+		displayAll.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event){
+				displayAll();
+			}
+		});
+		
+	}
+	
+	private void displayAll() {
+		parkService.getParks(new AsyncCallback<Park[]>() {
+			public void onFailure(Throwable error) {
+				// TODO handling the error
+			}
+		    public void onSuccess(Park[] parks) {
+		    	for(Park p:parks) {
+		    		showParkInTable(p);
+		    	}
+			}
+		});
+	}
+
+	private void showParkInTable(Park park) {
+		int row = parkTable.getRowCount();
+		
+		String id = String.valueOf(park.getParkId());
+		String parkfacilities = "";
+		for(Facility s:park.getParkFacilities().getFacilities()) {
+			parkfacilities = parkfacilities + s.getFacilityType() + " ";
+		}
+		parkTable.setText(row, 0, id);
+		parkTable.setText(row, 1, park.getName());
+		parkTable.setText(row, 2, park.getNeighbourhoodName());
+		parkTable.setText(row, 3, String.valueOf(park.getStreetNumber()));
+		parkTable.setText(row, 4, String.valueOf(park.getGoogleMapDest().getLat())
+				+String.valueOf(park.getGoogleMapDest().getLong()));
+		parkTable.setText(row, 5, parkfacilities);
+
+	}
+	
+	
+
 }
