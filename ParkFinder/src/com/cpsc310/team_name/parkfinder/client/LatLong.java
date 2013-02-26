@@ -11,10 +11,10 @@ public class LatLong implements Serializable {
 		
 	}
 	
-	// add this for convenience
 	public LatLong(float lat, float lon) {
-		this.longitude = lon;
 		this.latitude = lat;
+		this.longitude = lon;
+
 	}
 	
 	public float getLat() {
