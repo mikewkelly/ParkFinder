@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 public class Area implements Serializable {
 	
-	private int parkId;
+	private String parkId;
 	private String siteArea;
 	private String closureNotes;
 	private String weekendStatus;
 	private String lastUpdated;
 	
-	public Area(int theParkId) {
+	public Area(String theParkId) {
 		parkId = theParkId;
 	}
 	
-	public int getParkId() {
+	public String getParkId() {
 		return parkId;
 	}
 	

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Park implements Serializable{
 	
-	private int parkId;
+	private String parkId;
 	private String name;
 	private int streetNumber;
 	private String streetName;
@@ -13,11 +13,11 @@ public class Park implements Serializable{
 	private ParkFacilities parkFacilities;
 	private ParkAreas parkAreas;
 	
-	public Park(int theParkId) {
+	public Park(String theParkId) {
 		parkId = theParkId;
 	}
 	
-	public int getParkId() {
+	public String getParkId() {
 		return parkId;
 	}
 	

@@ -170,7 +170,7 @@ public class ParksListingParser {
 				
 				// Construct a new Park instance using collected data and add it to initialParks
 				
-				Park p = new Park(Integer.parseInt(tempParkID.toString()));
+				Park p = new Park(tempParkID.toString());
 				p.setName(tempParkName.toString());
 				p.setStreetName(tempStreetName.toString());
 				p.setStreetNumber(Integer.parseInt(tempStreetNumber.toString()));
@@ -178,7 +178,7 @@ public class ParksListingParser {
 				p.setGoogleMapDest(theLatLong);
 				p.setNeighbourhoodName(tempNeighbourhoodName.toString());
 				// Create an instance of ParkFacilities using parkFacilities and tempParkID
-				ParkFacilities pf = new ParkFacilities(Integer.parseInt(tempParkID.toString()), parkFacilities);
+				ParkFacilities pf = new ParkFacilities(tempParkID.toString(), parkFacilities);
 				p.setParkFacilities(pf);
 				
 				//add p to initialParks
@@ -201,9 +201,7 @@ public class ParksListingParser {
 		String[] theLatAndTheLong = googleMapDest.split(",");
 		String theLat = theLatAndTheLong[0];
 		String theLong = theLatAndTheLong[1];
-		LatLong theLatLong = new LatLong(); // constructor changed in Jack's edits
-		theLatLong.setLat(Float.parseFloat(theLat));
-		theLatLong.setLong(Float.parseFloat(theLong));
+		LatLong theLatLong = new LatLong(Float.parseFloat(theLat), Float.parseFloat(theLong)); 
 		return theLatLong;
 		}
 		
