@@ -49,7 +49,7 @@ public class ParkAreas implements Serializable {
 
 	public boolean containsArea(Area anArea) {
 		for (Area a: areas) {
-			if (a.getParkId().equals(anArea.getParkId())) {
+			if ((a.getParkId().equals(anArea.getParkId())) && (a.getSiteArea().equals(anArea.getSiteArea()))) {
 				return true;
 			}
 		}

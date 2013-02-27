@@ -5,20 +5,19 @@ import java.util.ArrayList;
 
 public class ParkFacilities implements Serializable {
 	
-	private int parkId;
+
+	private String parkId;
+	private int facilityCount;
 	private ArrayList<Facility> facilities;
 	
-	public ParkFacilities(int id, ArrayList<Facility> theFacilities) {
+
+	public ParkFacilities(String id, ArrayList<Facility> theFacilities) {
 		parkId = id;
-		facilities = theFacilities;
+		facilities = theFacilities;	
 	}
 	
-	public void setParkId(int anId) {
-		parkId = anId;
-	}
-	
-	
-	public int getParkId() {
+
+	public String getParkId() {
 		return parkId;
 	}
 	
@@ -29,14 +28,25 @@ public class ParkFacilities implements Serializable {
 	
 	public void addFacility(Facility theFacility) {
 		facilities.add(theFacility);
+		facilityCount++;
 	}
 	
 	public void removeFacility(Facility theFacility) {
-		// TODO
+		for(int i=0;i<facilities.size();i++) {
+			if(facilities.get(i).getFacilityType().equals(theFacility.getFacilityType())) {
+				facilities.remove(i);
+				facilityCount--;
+			}
+		}
 	}
 	
-	public void containsFacility(Facility theFacility) {
-		// TODO
+	public boolean containsFacility(Facility theFacility) {
+		for(Facility f:facilities) {
+			if(f.getFacilityType().equals(theFacility.getFacilityType())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 
