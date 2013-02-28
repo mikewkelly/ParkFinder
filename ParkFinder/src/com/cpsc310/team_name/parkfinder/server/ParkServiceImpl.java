@@ -10,13 +10,10 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import com.cpsc310.team_name.parkfinder.client.Park;
 import com.cpsc310.team_name.parkfinder.client.ParkService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import com.cpsc310.team_name.parkfinder.client.ParkService;
 
 public class ParkServiceImpl extends RemoteServiceServlet implements ParkService {
 
@@ -57,6 +54,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 			pm.close();
 		}
 		return park.toArray(new Park[park.size()]);
+		
 	}
 
 	@Override
@@ -77,6 +75,21 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 			pm.close();
 		}
 
+	}
+	
+	@Override
+	public void importParks() {
+		PersistenceManager pm = getPersistenceManager();
+		ArrayList<Park> parks = new ArrayList<Park>();
+		ParserFacade pf = new ParserFacade();
+		parks = pf.parse();	
+		try {
+			for(Park p:parks) {
+				pm.makePersistent(p);
+			}
+		} finally {
+			pm.close();
+		}
 	}
 
 }

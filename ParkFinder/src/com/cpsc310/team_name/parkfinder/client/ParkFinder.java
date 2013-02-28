@@ -32,10 +32,13 @@ public class ParkFinder implements EntryPoint {
 	private Button displayAllButton = new Button("DisplayAll");
 	private Button searchButton = new Button("Search");
 	private Label lastUpdateLabel = new Label();
+	private Label errorMessage = new Label();
+	private Label successMsg = new Label();
 	private ArrayList<Park> parks = new ArrayList<Park>();
 	
-	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
+	private Button importDataButton = new Button("Import");
 	
+	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
 
 	/**
 	 * This is the entry point method.
@@ -64,9 +67,14 @@ public class ParkFinder implements EntryPoint {
 		addPanel.add(searchCriteriaTextBox);
 		addPanel.add(searchButton);
 		addPanel.add(displayAllButton);
+		addPanel.add(importDataButton);
 		addPanel.addStyleName("inputTextBox");
 		searchButton.addStyleDependentName("search");
+		errorMessage.setVisible(false);
+		successMsg.setVisible(false);
 		
+		mainPanel.add(errorMessage);
+		mainPanel.add(successMsg);
 		mainPanel.add(parkTable);
 		mainPanel.add(addPanel);
 		mainPanel.add(lastUpdateLabel);
@@ -81,14 +89,38 @@ public class ParkFinder implements EntryPoint {
 			}
 		});
 		
+		importDataButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				importData();
+			}
+		});
+		
+	}
+	
+	private void importData() {
+		parkService.importParks(new AsyncCallback<Void>() {
+			public void onFailure(Throwable error) {
+				// TODO
+				errorMessage.setText("Error: failed to import data");
+				errorMessage.setVisible(true);
+			}
+			public void onSuccess(Void ignore) {
+				successMsg.setText("Data imported successfully");
+				successMsg.setVisible(true);
+			}
+		});
 	}
 	
 	private void displayAll() {
 		parkService.getParks(new AsyncCallback<Park[]>() {
 			public void onFailure(Throwable error) {
 				// TODO handling the error
+				errorMessage.setText("Error: failed to receive data from server");
+				errorMessage.setVisible(true);
 			}
 		    public void onSuccess(Park[] parks) {
+		    	successMsg.setText("Getting data from server...");
+		    	successMsg.setVisible(true);
 		    	for(Park p:parks) {
 		    		showParkInTable(p);
 		    	}
@@ -99,18 +131,18 @@ public class ParkFinder implements EntryPoint {
 	private void showParkInTable(Park park) {
 		int row = parkTable.getRowCount();
 		
-		String id = String.valueOf(park.getParkId());
 		String parkfacilities = "";
 		for(Facility s:park.getParkFacilities().getFacilities()) {
 			parkfacilities = parkfacilities + s.getFacilityType() + " ";
 		}
-		parkTable.setText(row, 0, id);
+		parkTable.setText(row, 0, park.getParkId());
 		parkTable.setText(row, 1, park.getName());
 		parkTable.setText(row, 2, park.getNeighbourhoodName());
 		parkTable.setText(row, 3, String.valueOf(park.getStreetNumber()));
 		parkTable.setText(row, 4, String.valueOf(park.getGoogleMapDest().getLat())
 				+String.valueOf(park.getGoogleMapDest().getLong()));
 		parkTable.setText(row, 5, parkfacilities);
+		
 
 	}
 	

@@ -16,7 +16,7 @@ public class ParkFacilities implements Serializable {
 		// default constructor
 	}
 	
-
+	
 	public ParkFacilities(String id, ArrayList<Facility> theFacilities) {
 
 		parkId = id;
