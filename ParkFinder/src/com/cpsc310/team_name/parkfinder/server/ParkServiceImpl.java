@@ -25,7 +25,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	@Override
-	public void addPark(int parkId) {
+	public void addPark(String parkId) {
 		// TODO 
 		PersistenceManager pm = getPersistenceManager();
 		try{
@@ -60,14 +60,14 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	}
 
 	@Override
-	public void removePark(int parkId) {
+	public void removePark(String parkId) {
 		PersistenceManager pm = getPersistenceManager();
 		try{
 			long deleteCount = 0;
 			Query q = pm.newQuery(Park.class);
 			List<Park> parks = (List<Park>) q.execute();
 			for(Park park:parks){
-				if(parkId==park.getParkId()){
+				if(parkId.equals(park.getParkId())){
 					deleteCount++;
 					pm.deletePersistent(park);
 				}

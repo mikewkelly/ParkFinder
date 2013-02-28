@@ -112,6 +112,7 @@ public class ParkFinder implements EntryPoint {
 				+String.valueOf(park.getGoogleMapDest().getLong()));
 		parkTable.setText(row, 5, parkfacilities);
 
+
 	}
 	
 	

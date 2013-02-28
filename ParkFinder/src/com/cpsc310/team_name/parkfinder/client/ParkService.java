@@ -5,10 +5,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("Park")
 public interface ParkService extends RemoteService {
-	void addPark(int parkId);
+	void addPark(String parkId);
 	
 	Park[] getParks();
 	
-	void removePark(int parkId);
+	void removePark(String parkId);
 
 }

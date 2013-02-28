@@ -3,20 +3,28 @@ package com.cpsc310.team_name.parkfinder.client;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@SuppressWarnings("serial")
 public class ParkFacilities implements Serializable {
 	
-	private int parkId;
+
+	private String parkId;
 	private int facilityCount;
 	private ArrayList<Facility> facilities;
 	
+
 	public ParkFacilities(){
 		// default constructor
 	}
 	
-	public ParkFacilities(int id) {
+
+	public ParkFacilities(String id, ArrayList<Facility> theFacilities) {
+
 		parkId = id;
+		facilities = theFacilities;	
+		facilityCount = facilities.size();
 	}
 	
+
 	// I think this method is unnecessary since id is set when it is created
 	// using the constructor
 	//public void setParkId(int anId) {
@@ -29,9 +37,7 @@ public class ParkFacilities implements Serializable {
 	//	facilityCount = count;
 	//}
 	
-	public int getParkId() {
-		return parkId;
-	}
+
 	
 	// I think for this we just return the size of the list
 	// so we don't need the extra attribute?
@@ -39,6 +45,13 @@ public class ParkFacilities implements Serializable {
 		return facilityCount;
 	}
 	
+
+
+	public String getParkId() {
+		return parkId;
+	}
+	
+
 	public ArrayList<Facility> getFacilities() {
 		return facilities;
 	}
@@ -49,8 +62,7 @@ public class ParkFacilities implements Serializable {
 	}
 	
 	public void removeFacility(Facility theFacility) {
-		// remove the facility if the type matches
-		// may remove multiple occurrences
+
 		for(int i=0;i<facilities.size();i++) {
 			if(facilities.get(i).getFacilityType().equals(theFacility.getFacilityType())) {
 				facilities.remove(i);
@@ -60,7 +72,7 @@ public class ParkFacilities implements Serializable {
 	}
 	
 	public boolean containsFacility(Facility theFacility) {
-		// return true if theFacility is in the list
+
 		for(Facility f:facilities) {
 			if(f.getFacilityType().equals(theFacility.getFacilityType())) {
 				return true;

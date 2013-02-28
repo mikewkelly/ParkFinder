@@ -2,25 +2,30 @@ package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Park implements Serializable{
 	
-	private int parkId;
+	private String parkId;
 	private String name;
 	private int streetNumber;
+	private String streetName;
 	private LatLong googleMapDest;
 	private String neighbourhoodName;
 	private ParkFacilities parkFacilities;
 	private ParkAreas parkAreas;
 	
+
 	public Park() {
 		// default constructor
 	}
 	
-	public Park(int theParkId) {
+
+	public Park(String theParkId) {
+
 		parkId = theParkId;
 	}
 	
-	public int getParkId() {
+	public String getParkId() {
 		return parkId;
 	}
 	
@@ -30,6 +35,10 @@ public class Park implements Serializable{
 	
 	public int getStreetNumber() {
 		return streetNumber;
+	}
+	
+	public String getStreetName() {
+		return streetName;
 	}
 	
 	public LatLong getGoogleMapDest() {
@@ -60,6 +69,10 @@ public class Park implements Serializable{
 	
 	public void setStreetNumber(int theNumber) {
 		streetNumber = theNumber;
+	}
+	
+	public void setStreetName(String theName) {
+		streetName = theName;
 	}
 	
 	public void setGoogleMapDest(LatLong theGMD) {

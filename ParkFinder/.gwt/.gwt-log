@@ -95,6 +95,7 @@ Compiling...
 Removing invalidated units
 Finding entry point classes
 Public resources found in...
+<<<<<<< HEAD
    Unexpected entry in classpath; /Users/jackchen/Documents/310/project/L2E-Team-Name/L2E-Team-Name/ParkFinder/test is neither a directory nor an archive (.jar or .zip)
    Unexpected entry in classpath; /ParkFinder/test-classes is neither a directory nor an archive (.jar or .zip)
 Translatable source found in...
@@ -225,6 +226,58 @@ Finding entry point classes
 Public resources found in...
    Unexpected entry in classpath; /Users/jackchen/Documents/310/project/L2E-Team-Name/L2E-Team-Name/ParkFinder/test is neither a directory nor an archive (.jar or .zip)
    Unexpected entry in classpath; /Users/jackchen/Documents/310/project/L2E-Team-Name/L2E-Team-Name/ParkFinder/test-classes is neither a directory nor an archive (.jar or .zip)
+=======
+Translatable source found in...
+Found 0 cached/archived units.  Used 0 / 2718 units from cache.
+Compiling...
+   0% complete (ETR: ?)
+   10% complete (ETR: 101 seconds)
+   20% complete (ETR: 63 seconds)
+   30% complete (ETR: 46 seconds)
+   40% complete (ETR: 36 seconds)
+   50% complete (ETR: 26 seconds)
+   60% complete (ETR: 18 seconds)
+   70% complete (ETR: 12 seconds)
+   80% complete (ETR: 8 seconds)
+   90% complete (ETR: 4 seconds)
+   100% complete (ETR: 0 seconds)
+   Compilation completed in 43.87 seconds
+Removing invalidated units
+Finding entry point classes
+Public resources found in...
+Translatable source found in...
+Found 2718 cached/archived units.  Used 2718 / 2718 units from cache.
+Compiling...
+   Compilation completed in 0.01 seconds
+Removing invalidated units
+Finding entry point classes
+Public resources found in...
+Translatable source found in...
+Found 2718 cached/archived units.  Used 2718 / 2718 units from cache.
+Compiling...
+   Compilation completed in 0.11 seconds
+Removing invalidated units
+Finding entry point classes
+Public resources found in...
+Translatable source found in...
+Found 0 cached/archived units.  Used 0 / 2718 units from cache.
+Compiling...
+   0% complete (ETR: 68 seconds)
+   10% complete (ETR: 66 seconds)
+   20% complete (ETR: 48 seconds)
+   30% complete (ETR: 34 seconds)
+   40% complete (ETR: 25 seconds)
+   50% complete (ETR: 19 seconds)
+   60% complete (ETR: 14 seconds)
+   70% complete (ETR: 9 seconds)
+   80% complete (ETR: 6 seconds)
+   90% complete (ETR: 3 seconds)
+   100% complete (ETR: 0 seconds)
+   Compilation completed in 43.94 seconds
+Removing invalidated units
+Finding entry point classes
+Public resources found in...
+>>>>>>> parsers
 Translatable source found in...
 Found 2718 cached/archived units.  Used 2718 / 2718 units from cache.
 Compiling...
@@ -232,8 +285,11 @@ Compiling...
 Removing invalidated units
 Finding entry point classes
 Public resources found in...
+<<<<<<< HEAD
    Unexpected entry in classpath; /Users/jackchen/Documents/310/project/L2E-Team-Name/L2E-Team-Name/ParkFinder/test is neither a directory nor an archive (.jar or .zip)
    Unexpected entry in classpath; /Users/jackchen/Documents/310/project/L2E-Team-Name/L2E-Team-Name/ParkFinder/test-classes is neither a directory nor an archive (.jar or .zip)
+=======
+>>>>>>> parsers
 Translatable source found in...
 Found 2718 cached/archived units.  Used 2718 / 2718 units from cache.
 Compiling...
