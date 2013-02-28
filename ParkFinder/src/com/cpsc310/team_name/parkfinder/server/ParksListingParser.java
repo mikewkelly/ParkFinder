@@ -86,6 +86,7 @@ public class ParksListingParser {
 		ArrayList<Park> tempInitialParks = new ArrayList<Park>();
 
 		try {
+			
 			// Convert XML String to DOM
 			Document fileDom = XMLParser.parse(file);
 
