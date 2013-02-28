@@ -2,6 +2,7 @@ package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Park implements Serializable{
 	
 	private String parkId;

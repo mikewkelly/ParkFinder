@@ -2,6 +2,7 @@ package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Area implements Serializable {
 	
 	private String parkId;
@@ -10,8 +11,9 @@ public class Area implements Serializable {
 	private String weekendStatus;
 	private String lastUpdated;
 	
-	public Area(String theParkId) {
+	public Area(String theParkId, String anArea) {
 		parkId = theParkId;
+		siteArea = anArea;
 	}
 	
 	public String getParkId() {
@@ -32,10 +34,6 @@ public class Area implements Serializable {
 	
 	public String getLastUpdated() {
 		return lastUpdated;
-	}
-	
-	public void setSiteArea(String anArea) {
-		siteArea = anArea;
 	}
 	
 	public void setClosureNotes(String theNotes) {

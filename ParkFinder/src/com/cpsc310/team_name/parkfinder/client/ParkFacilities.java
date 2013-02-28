@@ -3,6 +3,7 @@ package com.cpsc310.team_name.parkfinder.client;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@SuppressWarnings("serial")
 public class ParkFacilities implements Serializable {
 	
 
@@ -14,6 +15,7 @@ public class ParkFacilities implements Serializable {
 	public ParkFacilities(String id, ArrayList<Facility> theFacilities) {
 		parkId = id;
 		facilities = theFacilities;	
+		facilityCount = facilities.size();
 	}
 	
 

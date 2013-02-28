@@ -6,12 +6,10 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
 import com.cpsc310.team_name.parkfinder.client.Facility;
 import com.cpsc310.team_name.parkfinder.client.LatLong;
 import com.cpsc310.team_name.parkfinder.client.Park;
 import com.cpsc310.team_name.parkfinder.client.ParkFacilities;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Document;
@@ -25,16 +23,14 @@ public class ParksListingParser {
 	// URL of data: ftp://webftp.vancouver.ca/opendata/xml/parks_facilities.xml
 
 	private ArrayList<Park> initialParks = new ArrayList<Park>();
-	private ArrayList<Park> updatedParks = new ArrayList<Park>();
 
 	public ParksListingParser() {
 	}
 
 	public ArrayList<Park> parse() {
 		String xmlString = downloadXMLString();
-		parseXML(xmlString);
-		// pass value of initialParks to other parser and assign return value to updatedParks
-		return updatedParks;
+		initialParks = parseXML(xmlString);
+		return initialParks;
 	}
 
 	/**
@@ -85,7 +81,9 @@ public class ParksListingParser {
 	 * @param file The XML file to be parsed
 	 *            
 	 */
-	private void parseXML(String file) {
+	private ArrayList<Park> parseXML(String file) {
+		
+		ArrayList<Park> tempInitialParks = new ArrayList<Park>();
 
 		try {
 			// Convert XML String to DOM
@@ -95,7 +93,7 @@ public class ParksListingParser {
 			NodeList parkNodeList = element.getElementsByTagName("Park");
 			final int parkCount = parkNodeList.getLength();		
 
-			// Initialize the StringBuffers used to hold data needed for construction of Park instances
+			// Initialize the Accumulators used to hold data needed for construction of Park instances
 			StringBuffer tempParkID = new StringBuffer();
 			StringBuffer tempParkName = new StringBuffer();
 			StringBuffer tempStreetName = new StringBuffer();
@@ -105,7 +103,7 @@ public class ParksListingParser {
 			
 			 // iterate over every "Park" node	
 			for (int i = 0; i < parkCount; i++) {	
-				// Clear the contents of each StringBuffer
+				// Clear the contents of each Accumulator
 				tempParkID.setLength(0);
 				tempParkName.setLength(0);
 				tempStreetName.setLength(0);
@@ -182,13 +180,14 @@ public class ParksListingParser {
 				p.setParkFacilities(pf);
 				
 				//add p to initialParks
-				initialParks.add(p);
+				tempInitialParks.add(p);
 			}
 
 		} catch (DOMException e) {
 			Window.alert("Could not parse XML document");
-		}
+		} 
 		
+		return tempInitialParks;	
 	}
 	
 	/**

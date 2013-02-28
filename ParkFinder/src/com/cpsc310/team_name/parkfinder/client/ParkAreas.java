@@ -3,8 +3,10 @@ package com.cpsc310.team_name.parkfinder.client;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@SuppressWarnings("serial")
 public class ParkAreas implements Serializable {
 	
+
 	private String parkId;
 	private int areaCount;
 	private ArrayList<Area> areas;
@@ -40,7 +42,7 @@ public class ParkAreas implements Serializable {
 	
 	public void removeArea(Area anArea) {
 		for (int i = 0; i < areas.size(); i++ ) {
-			if (areas.get(i).getParkId().equals(anArea.getParkId())) {
+			if ((areas.get(i).getParkId().equals(anArea.getParkId())) && (areas.get(i).getSiteArea().equals(anArea.getSiteArea()))) {
 				areas.remove(i);
 			}
 		}
@@ -55,7 +57,5 @@ public class ParkAreas implements Serializable {
 		}
 		return false;
 	}
-	
-	
 
 }
