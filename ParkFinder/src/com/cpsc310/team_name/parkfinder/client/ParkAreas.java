@@ -9,6 +9,10 @@ public class ParkAreas implements Serializable {
 	private int areaCount;
 	private ArrayList<Area> areas;
 	
+	public ParkAreas(){
+		// default constructor
+	}
+	
 	public ParkAreas(int theParkId) {
 		parkId = theParkId;
 	}

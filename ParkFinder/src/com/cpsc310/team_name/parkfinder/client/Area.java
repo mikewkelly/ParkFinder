@@ -10,6 +10,10 @@ public class Area implements Serializable {
 	private String weekendStatus;
 	private String lastUpdated;
 	
+	public Area() {
+		
+	}
+	
 	public Area(int theParkId) {
 		parkId = theParkId;
 	}

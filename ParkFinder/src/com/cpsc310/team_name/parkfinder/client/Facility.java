@@ -5,6 +5,10 @@ import java.io.Serializable;
 public class Facility implements Serializable{
 	
 	private String facilityType;
+	
+	public Facility(){
+		// default constructor
+	}
 
 	public Facility(String afacilityType) {
 		facilityType = afacilityType;

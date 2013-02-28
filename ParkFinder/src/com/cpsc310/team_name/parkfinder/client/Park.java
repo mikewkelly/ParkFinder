@@ -12,6 +12,10 @@ public class Park implements Serializable{
 	private ParkFacilities parkFacilities;
 	private ParkAreas parkAreas;
 	
+	public Park() {
+		// default constructor
+	}
+	
 	public Park(int theParkId) {
 		parkId = theParkId;
 	}
