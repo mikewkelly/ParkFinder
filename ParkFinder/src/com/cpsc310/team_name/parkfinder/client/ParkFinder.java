@@ -148,5 +148,6 @@ public class ParkFinder implements EntryPoint {
 		MyHandler handler = new MyHandler();
 		sendButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
+		
 	}
 }

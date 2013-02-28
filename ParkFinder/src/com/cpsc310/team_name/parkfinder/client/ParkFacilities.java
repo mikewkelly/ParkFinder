@@ -3,34 +3,28 @@ package com.cpsc310.team_name.parkfinder.client;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@SuppressWarnings("serial")
 public class ParkFacilities implements Serializable {
 	
-	private int parkId;
+
+	private String parkId;
 	private int facilityCount;
 	private ArrayList<Facility> facilities;
 	
-	public ParkFacilities(int id) {
+
+	public ParkFacilities(String id, ArrayList<Facility> theFacilities) {
 		parkId = id;
+		facilities = theFacilities;	
+		facilityCount = facilities.size();
 	}
 	
-	public void setParkId(int anId) {
-		parkId = anId;
-	}
-	
-	// this method is unnecessary since count gets increased/decreased only by
-	// adding/removing methods 
-	//public void setFacilityCount(int count) {
-	//	facilityCount = count;
-	//}
-	
-	public int getParkId() {
+
+
+	public String getParkId() {
 		return parkId;
 	}
 	
-	public int getFacilityCount() {
-		return facilityCount;
-	}
-	
+
 	public ArrayList<Facility> getFacilities() {
 		return facilities;
 	}
