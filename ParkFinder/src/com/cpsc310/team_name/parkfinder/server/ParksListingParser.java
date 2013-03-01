@@ -25,6 +25,7 @@ public class ParksListingParser {
 	private ArrayList<Park> initialParks = new ArrayList<Park>();
 
 	public ParksListingParser() {
+		
 	}
 
 	public ArrayList<Park> parse() {
