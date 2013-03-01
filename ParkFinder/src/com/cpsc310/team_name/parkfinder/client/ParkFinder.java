@@ -34,7 +34,7 @@ public class ParkFinder implements EntryPoint {
 	private Label lastUpdateLabel = new Label();
 	private Label errorMessage = new Label();
 	private Label successMsg = new Label();
-	private ArrayList<Park> parks = new ArrayList<Park>();
+	private ArrayList<Park> parklist = new ArrayList<Park>();
 	
 	private Button importDataButton = new Button("Import");
 	
@@ -100,7 +100,6 @@ public class ParkFinder implements EntryPoint {
 	private void importData() {
 		parkService.importParks(new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
-				// TODO
 				errorMessage.setText("Error: failed to import data");
 				errorMessage.setVisible(true);
 			}
@@ -114,7 +113,6 @@ public class ParkFinder implements EntryPoint {
 	private void displayAll() {
 		parkService.getParks(new AsyncCallback<Park[]>() {
 			public void onFailure(Throwable error) {
-				// TODO handling the error
 				errorMessage.setText("Error: failed to receive data from server");
 				errorMessage.setVisible(true);
 			}
@@ -122,6 +120,7 @@ public class ParkFinder implements EntryPoint {
 		    	successMsg.setText("Getting data from server...");
 		    	successMsg.setVisible(true);
 		    	for(Park p:parks) {
+		    		parklist.add(p);
 		    		showParkInTable(p);
 		    	}
 			}

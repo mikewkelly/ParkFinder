@@ -32,11 +32,6 @@ public class ParkAreas implements Serializable {
 		return areas;
 	}
 	
-	// this method is unnecessary because the parkId is set with the constructor
-//	public void setParkId(int theId) {
-//		parkId = theId;
-//	}
-	
 	public void setAreaCount(int count) {
 		areaCount = count;
 	}

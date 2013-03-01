@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import com.cpsc310.team_name.parkfinder.client.Area;
 import com.cpsc310.team_name.parkfinder.client.Park;
 import com.cpsc310.team_name.parkfinder.client.ParkAreas;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.Node;
@@ -24,8 +26,8 @@ public class WeekendPlayfieldStatusParser {
 	private ArrayList<Park> updatedParks;
 	private ArrayList<ParkAreas> parkAreasList;
 	
-	public WeekendPlayfieldStatusParser(ArrayList<Park> theParks) {
-		initialParks = theParks;
+	public WeekendPlayfieldStatusParser(ArrayList<Park> theInitialParks) {
+		initialParks = theInitialParks;
 	}
 
 	public ArrayList<Park> parse() {
@@ -93,6 +95,7 @@ public class WeekendPlayfieldStatusParser {
 		
 		ArrayList<Area> theAreas = new ArrayList<Area>();
 		
+		try {
 		// Convert XML String to DOM
 		Document fileDom = XMLParser.parse(file);
 
@@ -146,6 +149,10 @@ public class WeekendPlayfieldStatusParser {
 			theAreas.add(a);
 		}
 		
+		} catch (DOMException e) {
+			Window.alert("Could not parse XML document");
+		}
+		
 		return theAreas;
 
 	}
@@ -159,7 +166,6 @@ public class WeekendPlayfieldStatusParser {
 		ArrayList<ParkAreas> parkAreasList = new ArrayList<ParkAreas>();
 		ArrayList<Area> areas = theAreas;
 		StringBuffer tempParkId = new StringBuffer();
-		StringBuffer tempSiteArea = new StringBuffer();
 		ArrayList<String> ids = new ArrayList<String>();
 		
 		// Populate a list of unique Park Ids

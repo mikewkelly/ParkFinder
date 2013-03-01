@@ -1,17 +1,39 @@
 package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
 @SuppressWarnings("serial")
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Park implements Serializable{
 	
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private String parkId;
+	
+	@Persistent
 	private String name;
+	
+	@Persistent
 	private int streetNumber;
+	
+	@Persistent
 	private String streetName;
+	
+	@Persistent(serialized = "true")
 	private LatLong googleMapDest;
+	
+	@Persistent
 	private String neighbourhoodName;
+	
+	@Persistent(serialized = "true")
 	private ParkFacilities parkFacilities;
+	
+	@Persistent(serialized = "true")
 	private ParkAreas parkAreas;
 	
 
