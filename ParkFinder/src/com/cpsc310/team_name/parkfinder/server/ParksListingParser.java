@@ -50,7 +50,7 @@ public class ParksListingParser {
 
 		try {
 			URL url = new URL(
-					"ftp://webftp.vancouver.ca/opendata/xml/parks_facilities.xml");
+					"http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					url.openStream()));
 			String individualLine;

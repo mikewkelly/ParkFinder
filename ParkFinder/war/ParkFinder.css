@@ -33,5 +33,17 @@ body {
 	background: transparent;
 }
 
+/* error message */
+.errorMessage {
+	color: red;
+	font-style: italic;
+}
+
+/* request success message */
+.successMessage {
+	color: green;
+	font-style: italic;
+}
+
 
 

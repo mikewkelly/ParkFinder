@@ -41,6 +41,13 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	public Park[] getParks() {
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Park> park = new ArrayList<Park>();
+		
+		// test
+		//-----
+		Park aPark = new Park("test_Id");
+		aPark.setName("test_name");
+		pm.makePersistent(aPark);
+		//-----
 		try{
 			Query q = pm.newQuery(Park.class);
 			q.setOrdering("parkId ");

@@ -70,6 +70,8 @@ public class ParkFinder implements EntryPoint {
 		addPanel.add(importDataButton);
 		addPanel.addStyleName("inputTextBox");
 		searchButton.addStyleDependentName("search");
+		errorMessage.setStyleName("errorMessage");
+		successMsg.setStyleName("successMessage");
 		errorMessage.setVisible(false);
 		successMsg.setVisible(false);
 		
@@ -123,6 +125,7 @@ public class ParkFinder implements EntryPoint {
 		    		parklist.add(p);
 		    		showParkInTable(p);
 		    	}
+		    	successMsg.setText("Parks Displayed");
 			}
 		});
 	}
@@ -130,17 +133,17 @@ public class ParkFinder implements EntryPoint {
 	private void showParkInTable(Park park) {
 		int row = parkTable.getRowCount();
 		
-		String parkfacilities = "";
-		for(Facility s:park.getParkFacilities().getFacilities()) {
-			parkfacilities = parkfacilities + s.getFacilityType() + " ";
-		}
+		//String parkfacilities = "";
+		//for(Facility s:park.getParkFacilities().getFacilities()) {
+			//parkfacilities = parkfacilities + s.getFacilityType() + " ";
+		//}
 		parkTable.setText(row, 0, park.getParkId());
 		parkTable.setText(row, 1, park.getName());
-		parkTable.setText(row, 2, park.getNeighbourhoodName());
-		parkTable.setText(row, 3, String.valueOf(park.getStreetNumber()));
-		parkTable.setText(row, 4, String.valueOf(park.getGoogleMapDest().getLat())
-				+String.valueOf(park.getGoogleMapDest().getLong()));
-		parkTable.setText(row, 5, parkfacilities);
+		//parkTable.setText(row, 2, park.getNeighbourhoodName());
+		//parkTable.setText(row, 3, String.valueOf(park.getStreetNumber()));
+		//parkTable.setText(row, 4, String.valueOf(park.getGoogleMapDest().getLat())
+			//	+String.valueOf(park.getGoogleMapDest().getLong()));
+		//parkTable.setText(row, 5, parkfacilities);
 		
 
 	}

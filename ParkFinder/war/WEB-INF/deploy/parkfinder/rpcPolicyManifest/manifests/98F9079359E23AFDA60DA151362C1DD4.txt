@@ -1,2 +1,0 @@
-serviceClass: com.cpsc310.team_name.parkfinder.client.GreetingService
-path: 06E36FDBA308643814B23415D5D0E089.gwt.rpc
