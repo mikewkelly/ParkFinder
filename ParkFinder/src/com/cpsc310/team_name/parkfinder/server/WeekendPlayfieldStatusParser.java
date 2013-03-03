@@ -65,11 +65,7 @@ public class WeekendPlayfieldStatusParser {
 		ArrayList<Area> theAreas = new ArrayList<Area>();
 		
 		try {
-<<<<<<< HEAD
 
-		// Convert XML String to DOM
-		Document fileDom = XMLParser.parse(file);
-=======
 		
 		URL url = new URL(
 					"http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml");
@@ -83,7 +79,6 @@ public class WeekendPlayfieldStatusParser {
 		Document fileDom = dBuilder.parse(inputSource);
 		reader.close();
 			
->>>>>>> 8bb314a8d5519a21aedbb27e2cd0c6eb575edaf9
 
 		Element element = fileDom.getDocumentElement();
 		NodeList parkNodeList = element.getElementsByTagName("Park");
