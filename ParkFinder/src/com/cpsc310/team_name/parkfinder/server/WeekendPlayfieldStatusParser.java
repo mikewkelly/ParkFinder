@@ -1,21 +1,20 @@
 package com.cpsc310.team_name.parkfinder.server;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
 import com.cpsc310.team_name.parkfinder.client.Area;
 import com.cpsc310.team_name.parkfinder.client.Park;
 import com.cpsc310.team_name.parkfinder.client.ParkAreas;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.xml.client.DOMException;
-import com.google.gwt.xml.client.Document;
-import com.google.gwt.xml.client.Element;
-import com.google.gwt.xml.client.Node;
-import com.google.gwt.xml.client.NodeList;
-import com.google.gwt.xml.client.XMLParser;
 
 public class WeekendPlayfieldStatusParser {
 
@@ -32,14 +31,15 @@ public class WeekendPlayfieldStatusParser {
 
 	public ArrayList<Park> parse() {
 		// get the XML file from CoV server
-		String xmlString = downloadXMLString();
+
 		// get an ArrayList of all the Areas from the XML
-		allAreas = parseXML(xmlString);
+		allAreas = parseXML();
 		// get an ArrayList of ParkAreas, organized by parkId, from allAreas
-		parkAreasList = organizeAreas(allAreas);
+//		parkAreasList = organizeAreas(allAreas);
 		// update initialParks to include data from ParkAreas
-		updatedParks = updateParks(initialParks, parkAreasList);
-		return updatedParks;
+//		updatedParks = updateParks(initialParks, parkAreasList);
+//		return updatedParks;
+		return initialParks;
 	}
 
 	/**
@@ -51,38 +51,7 @@ public class WeekendPlayfieldStatusParser {
 	 *         Data Catalogue
 	 */
 
-	private String downloadXMLString() {
-		String file = new String();
-		StringBuffer tempFile = new StringBuffer();
-
-		tempFile.setLength(0); // initialise the StringBuffer
-
-		try {
-			URL url = new URL(
-					"http://www.ugrad.cs.ubc.ca/~p8h8/weekendplayfieldstatus.xml");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					url.openStream()));
-			String individualLine;
-
-			while ((individualLine = reader.readLine()) != null) { // while
-																	// non-empty
-																	// lines
-																	// exist:
-				tempFile.append(individualLine); // read each line and add it to
-													// tempFile
-			}
-
-			reader.close();
-
-		} catch (MalformedURLException e) {
-			// Do nothing
-		} catch (IOException e) {
-			// Do nothing
-		}
-
-		file = tempFile.toString();
-		return file;
-	}
+	
 
 	/**
 	 * Called to parse an XML String and create ParkFacilities and ParkAreas instances with
@@ -91,14 +60,30 @@ public class WeekendPlayfieldStatusParser {
 	 * @param file
 	 *            The XML file to be parsed
 	 */
-	private ArrayList<Area> parseXML(String file) {
+	private ArrayList<Area> parseXML() {
 		
 		ArrayList<Area> theAreas = new ArrayList<Area>();
 		
 		try {
+<<<<<<< HEAD
 
 		// Convert XML String to DOM
 		Document fileDom = XMLParser.parse(file);
+=======
+		
+		URL url = new URL(
+					"http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+					url.openStream()));
+			
+		InputSource inputSource = new InputSource(reader);
+			
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document fileDom = dBuilder.parse(inputSource);
+		reader.close();
+			
+>>>>>>> 8bb314a8d5519a21aedbb27e2cd0c6eb575edaf9
 
 		Element element = fileDom.getDocumentElement();
 		NodeList parkNodeList = element.getElementsByTagName("Park");
@@ -120,23 +105,27 @@ public class WeekendPlayfieldStatusParser {
 			tempWeekendStatus.setLength(0);
 			tempLastUpdated.setLength(0);
 			
-			//Get the ID of the park
+//			//Get the ID of the park
 			Node parkNode = parkNodeList.item(i);
 			tempParkID.append(((Element) parkNode).getAttribute("ID"));
 			
 			Element parkContents = (Element) parkNodeList.item(i); // parkContents is an individual park node's contents
 			
 			// get the site area
-			tempSiteArea.append(parkContents.getElementsByTagName("SiteArea").item(0).getFirstChild().getNodeValue());
+			// ERROR HERE
+//			tempSiteArea.append(parkContents.getElementsByTagName("SiteArea").item(0).getFirstChild().getNodeValue());
 
 			// get the closure notes
-			tempClosureNotes.append(parkContents.getElementsByTagName("ClosureNotes").item(0).getFirstChild().getNodeValue());
+//			tempClosureNotes.append(parkContents.getElementsByTagName("ClosureNotes").item(0).getFirstChild().getNodeValue());
 			
-			// get the weekend status
-			tempWeekendStatus.append(parkContents.getElementsByTagName("WeekendStatus").item(0).getFirstChild().getNodeValue());
+//			// get the weekend status
+//			tempWeekendStatus.append(parkContents.getElementsByTagName("WeekendStatus").item(0).getFirstChild().getNodeValue());
 			
 			// get last updated
-			tempLastUpdated.append(parkContents.getElementsByTagName("LastUpdated").item(0).getFirstChild().getNodeValue());
+//			tempLastUpdated.append(parkContents.getElementsByTagName("LastUpdated").item(0).getFirstChild().getNodeValue());
+			
+			// to HERE
+			
 			
 			// Construct a new Area instance using accumulator values
 			
@@ -150,8 +139,8 @@ public class WeekendPlayfieldStatusParser {
 			theAreas.add(a);
 		}
 		
-		} catch (DOMException e) {
-			Window.alert("Could not parse XML document");
+		} catch (Exception e) {
+			System.out.println("Could not parse XML document");
 		}
 		
 
