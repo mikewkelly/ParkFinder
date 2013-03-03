@@ -147,22 +147,27 @@ public class ParksListingParser {
 				Park p = new Park(tempParkID.toString());
 				p.setName(tempParkName.toString());
 				p.setStreetName(tempStreetName.toString());
+				
 				// We treat StreetNumber differently since some of the label are missing
 				String stN = null;
-				try{
-				stN = parkElement.getElementsByTagName("StreetNumber").item(0).getTextContent();
+				try
+				{
+					stN = parkElement.getElementsByTagName("StreetNumber").item(0).getTextContent();
 				}catch(Exception e){}
 				if(stN==null)
 				{
 					p.setStreetNumber("N/A");
-				}else{
+				}
+				else
+				{
 				p.setStreetNumber(parkElement.getElementsByTagName("StreetNumber").item(0).getTextContent());
 				}
 			
+				//implement for later use on GoogleMap
 				LatLong theLatLong = convertGMDtoLatLong(tempGoogleMapDest.toString());
 				p.setGoogleMapDest(theLatLong);
 				p.setNeighbourhoodName(tempNeighbourhoodName.toString());
-				// Create an instance of ParkFacilities using parkFacilities and tempParkID
+				//Create an instance of ParkFacilities using parkFacilities and tempParkID
 				ParkFacilities pf = new ParkFacilities(tempParkID.toString(), parkFacilities);
 				p.setParkFacilities(pf);
 				

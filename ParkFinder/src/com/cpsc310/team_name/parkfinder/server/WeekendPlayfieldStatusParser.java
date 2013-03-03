@@ -68,7 +68,7 @@ public class WeekendPlayfieldStatusParser {
 
 		
 		URL url = new URL(
-					"http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml");
+					"https://docs.google.com/file/d/0B3QwW7YpNfjBdExCYjlYaTRydnc/edit?usp=sharing");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 					url.openStream()));
 			

@@ -54,11 +54,10 @@ public class ParkFinder implements EntryPoint {
 		parkTable.setText(0,0,"Park ID");
 		parkTable.setText(0,1,"Park Name");
 		parkTable.setText(0,2,"Neighbourhood");
-		parkTable.setText(0,3,"Street Name");
-		parkTable.setText(0,4,"Street Number");
-		parkTable.setText(0,5,"GoogleMapDest");
-		parkTable.setText(0,6,"Facilities");
-		parkTable.setText(0,7,"Area");
+		parkTable.setText(0,3,"Street Number");
+		parkTable.setText(0,4,"Street Name");
+		parkTable.setText(0,5,"Facilities");
+		parkTable.setText(0,6,"Area");
 		
 		parkTable.getRowFormatter().addStyleName(0, "parkListHeader");
 		parkTable.addStyleName("parkList");
@@ -141,11 +140,10 @@ public class ParkFinder implements EntryPoint {
 		parkTable.setText(row, 0, park.getParkId());
 		parkTable.setText(row, 1, park.getName());
 		parkTable.setText(row, 2, park.getNeighbourhoodName());
-		parkTable.setText(row,3,park.getStreetName());
-		parkTable.setText(row, 4, park.getStreetNumber());
-		//parkTable.setText(row, 5, String.valueOf(park.getGoogleMapDest().getLat())
-		//		+String.valueOf(park.getGoogleMapDest().getLong()));
-		//parkTable.setText(row, 6, parkfacilities);
+		parkTable.setText(row, 3, park.getStreetNumber());
+		parkTable.setText(row, 4, park.getStreetName());
+		//parkTable.setText(row,5,parkfacilities);
+		//parkTable.setText(row, 6, parkArea);
 		
 
 	}
