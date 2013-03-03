@@ -59,7 +59,7 @@ public class WeekendPlayfieldStatusParser {
 
 		try {
 			URL url = new URL(
-					"ftp://webftp.vancouver.ca/opendata/xml/weekendplayfieldstatus.xml");
+					"http://www.ugrad.cs.ubc.ca/~p8h8/weekendplayfieldstatus.xml");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					url.openStream()));
 			String individualLine;
@@ -96,7 +96,7 @@ public class WeekendPlayfieldStatusParser {
 		ArrayList<Area> theAreas = new ArrayList<Area>();
 		
 		try {
-			
+
 		// Convert XML String to DOM
 		Document fileDom = XMLParser.parse(file);
 
@@ -154,8 +154,9 @@ public class WeekendPlayfieldStatusParser {
 			Window.alert("Could not parse XML document");
 		}
 		
-		return theAreas; 
+
 		
+			return theAreas;
 
 	}
 	/**

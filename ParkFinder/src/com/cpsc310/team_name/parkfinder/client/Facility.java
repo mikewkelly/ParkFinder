@@ -7,6 +7,11 @@ public class Facility implements Serializable{
 	
 	private String facilityType;
 	private int facilityCount;
+	
+	public Facility(){
+		// default constructor
+	}
+
 
 	public Facility(String aFacilityType, int aFacilityCount) {
 		facilityType = aFacilityType;

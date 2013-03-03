@@ -9,9 +9,8 @@ public class LatLong implements Serializable {
 	private float latitude;
 	
 
-	public LatLong(float lat, float lon) {
-		this.latitude = lat;
-		this.longitude = lon;
+	public LatLong() {
+		
 	}
 	
 	public float getLat() {
@@ -21,7 +20,12 @@ public class LatLong implements Serializable {
 	public float getLong() {
 		return longitude;
 	}
-	
+	public void setLat(float lat){
+		latitude=lat;
+	}
+	public void setLong(float lon){
+		longitude = lon;
+	}
 }
 
 

@@ -1,34 +1,49 @@
 /** Add css rules here for your application. */
 
 
-/** Example rules used by the template application (remove for your app) */
-h1 {
-  font-size: 2em;
-  font-weight: bold;
-  color: #777777;
-  margin: 40px 0px 70px;
-  text-align: center;
+body {
+	padding: 10px;
 }
 
-.sendButton {
-  display: block;
-  font-size: 16pt;
+/* park list table header */
+.parkListHeader {
+	background-color: #2062B8;
+	color: white;
+	font-style: bold;
 }
 
-/** Most GWT widgets already have a style name defined */
-.gwt-DialogBox {
-  width: 400px;
+/* table list */
+.parkList {
+	test-align: right;
+	border: 1px solid silver;
+	padding: 2px;
+	margin-bottom: 6px;
 }
 
-.dialogVPanel {
-  margin: 5px;
+/* input text box */
+.inputTextBox {
+	margin: 10px 0px 15px 0px;
 }
 
-.serverResponseLabelError {
-  color: red;
+/* button */
+.gwt-Button-search {
+	width: 70px;
+	padding: 5px 5px;
+	border: 1px #FF00FF;
+	background: transparent;
 }
 
-/** Set ids using widget.getElement().setId("idOfElement") */
-#closeButton {
-  margin: 15px 6px 6px;
+/* error message */
+.errorMessage {
+	color: red;
+	font-style: italic;
 }
+
+/* request success message */
+.successMessage {
+	color: green;
+	font-style: italic;
+}
+
+
+
