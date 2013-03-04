@@ -50,7 +50,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 		//-----
 		try{
 			Query q = pm.newQuery(Park.class);
-			q.setOrdering("parkId ");
+			q.setOrdering("name");
 			List<Park> parks = (List<Park>) q.execute();
 			for (Park p:parks){
 				park.add(p);

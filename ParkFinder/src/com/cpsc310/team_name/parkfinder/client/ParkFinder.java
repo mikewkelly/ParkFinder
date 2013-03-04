@@ -1,6 +1,8 @@
 package com.cpsc310.team_name.parkfinder.client;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import com.cpsc310.team_name.parkfinder.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -43,21 +45,20 @@ public class ParkFinder implements EntryPoint {
 	/**
 	 * This is the entry point method.
 	 */
-	public void onModuleLoad() {
-		
-		loadParkTable();
-		
+	public void onModuleLoad() {		
+		loadParkTable();		
 	}
 	
 	public void loadParkTable() {
 		// table layout
-		parkTable.setText(0,0,"Park ID");
-		parkTable.setText(0,1,"Park Name");
-		parkTable.setText(0,2,"Neighbourhood");
-		parkTable.setText(0,3,"Street Number");
-		parkTable.setText(0,4,"GoogleMapDest");
-		parkTable.setText(0,5,"Facilities");
-		parkTable.setText(0,6,"Area");
+		//parkTable.setText(0,0,"Park ID");
+		parkTable.setText(0,0,"Park Name");
+		parkTable.setText(0,1,"Neighbourhood");
+		parkTable.setText(0,2,"Street");
+		//parkTable.setText(0,4,"GoogleMapDest");
+		parkTable.setText(0,3,"Facilities");
+		parkTable.setText(0,4,"Weekend Status");
+		//parkTable.setText(0,6,"Area");
 		
 		parkTable.getRowFormatter().addStyleName(0, "parkListHeader");
 		parkTable.addStyleName("parkList");
@@ -77,8 +78,8 @@ public class ParkFinder implements EntryPoint {
 		
 		mainPanel.add(errorMessage);
 		mainPanel.add(successMsg);
-		mainPanel.add(parkTable);
 		mainPanel.add(addPanel);
+		mainPanel.add(parkTable);
 		mainPanel.add(lastUpdateLabel);
 		
 		RootPanel.get("parkList").add(mainPanel);
@@ -112,6 +113,12 @@ public class ParkFinder implements EntryPoint {
 		});
 	}
 	
+	/* BUG: Hitting displayAll() multiple times creates copies of the list
+	 * which are appended to the end of the list.
+	 * PROBABLE CAUSE: the for loop (and showParkInTable()) will generate
+	 * a new copy because it doesn't check to see if the parks are already
+	 * in the table.
+	 */	
 	private void displayAll() {
 		parkService.getParks(new AsyncCallback<Park[]>() {
 			public void onFailure(Throwable error) {
@@ -121,33 +128,30 @@ public class ParkFinder implements EntryPoint {
 		    public void onSuccess(Park[] parks) {
 		    	successMsg.setText("Getting data from server...");
 		    	successMsg.setVisible(true);
+
 		    	for(Park p:parks) {
 		    		parklist.add(p);
 		    		showParkInTable(p);
-		    	}
-		    	successMsg.setText("Parks Displayed");
+		    		}
+		    	
+		    	successMsg.setText("Parks Displayed: " + parklist.size());
 			}
 		});
 	}
 
 	private void showParkInTable(Park park) {
-		int row = parkTable.getRowCount();
 		
+		int row = parkTable.getRowCount();
 		//String parkfacilities = "";
 		//for(Facility s:park.getParkFacilities().getFacilities()) {
 			//parkfacilities = parkfacilities + s.getFacilityType() + " ";
 		//}
-		parkTable.setText(row, 0, park.getParkId());
-		parkTable.setText(row, 1, park.getName());
-		//parkTable.setText(row, 2, park.getNeighbourhoodName());
-		//parkTable.setText(row, 3, String.valueOf(park.getStreetNumber()));
+		//parkTable.setText(row, 0, park.getParkId());
+		parkTable.setText(row, 0, park.getName());
+		parkTable.setText(row, 1, park.getNeighbourhoodName());
+		parkTable.setText(row, 2, String.valueOf(park.getStreetName()));
 		//parkTable.setText(row, 4, String.valueOf(park.getGoogleMapDest().getLat())
 			//	+String.valueOf(park.getGoogleMapDest().getLong()));
 		//parkTable.setText(row, 5, parkfacilities);
-		
-
-	}
-	
-	
-
+		}
 }
