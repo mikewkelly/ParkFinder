@@ -65,9 +65,10 @@ public class WeekendPlayfieldStatusParser {
 		ArrayList<Area> theAreas = new ArrayList<Area>();
 		
 		try {
+
 		
 		URL url = new URL(
-					"http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml");
+					"https://docs.google.com/file/d/0B3QwW7YpNfjBdExCYjlYaTRydnc/edit?usp=sharing");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 					url.openStream()));
 			
@@ -137,7 +138,9 @@ public class WeekendPlayfieldStatusParser {
 			System.out.println("Could not parse XML document");
 		}
 		
-		return theAreas;
+
+		
+			return theAreas;
 
 	}
 	/**

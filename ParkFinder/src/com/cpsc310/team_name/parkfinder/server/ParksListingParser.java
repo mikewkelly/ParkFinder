@@ -45,6 +45,7 @@ public class ParksListingParser {
 
 		try {
 
+
 			URL url = new URL(
 					"http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -73,6 +74,7 @@ public class ParksListingParser {
 			 // iterate over every "Park" node	
 			for (int i = 0; i < parkCount; i++) {	
 				// Clear the contents of each Accumulator
+				
 				tempParkID.setLength(0);
 				tempParkName.setLength(0);
 				tempStreetName.setLength(0);
@@ -86,6 +88,7 @@ public class ParksListingParser {
 				
 				//Get the ID of the park node
 				Node parkNode = parkNodeList.item(i);
+				Element parkElement = (Element) parkNode;
 				tempParkID.append(((Element) parkNode).getAttribute("ID"));
 
 				Element parkContents = (Element) parkNodeList.item(i); // parkContents is an individual park node's contents
@@ -96,7 +99,7 @@ public class ParksListingParser {
 				
 				// THIS IS WHERE THE ERROR IS -NumberFormatException gets thrown
 				// get the street number
-			//	tempStreetNumber.append(parkContents.getElementsByTagName("StreetNumber").item(0).getFirstChild().getNodeValue());			
+				//tempStreetNumber.append(parkContents.getElementsByTagName("StreetNumber").item(0).getFirstChild().getNodeValue());			
 				// END OF ERROR
 				
 
@@ -144,11 +147,27 @@ public class ParksListingParser {
 				Park p = new Park(tempParkID.toString());
 				p.setName(tempParkName.toString());
 				p.setStreetName(tempStreetName.toString());
-	//			p.setStreetNumber(Integer.parseInt(tempStreetNumber.toString()));
+				
+				// We treat StreetNumber differently since some of the label are missing
+				String stN = null;
+				try
+				{
+					stN = parkElement.getElementsByTagName("StreetNumber").item(0).getTextContent();
+				}catch(Exception e){}
+				if(stN==null)
+				{
+					p.setStreetNumber("N/A");
+				}
+				else
+				{
+				p.setStreetNumber(parkElement.getElementsByTagName("StreetNumber").item(0).getTextContent());
+				}
+			
+				//implement for later use on GoogleMap
 				LatLong theLatLong = convertGMDtoLatLong(tempGoogleMapDest.toString());
 				p.setGoogleMapDest(theLatLong);
 				p.setNeighbourhoodName(tempNeighbourhoodName.toString());
-				// Create an instance of ParkFacilities using parkFacilities and tempParkID
+				//Create an instance of ParkFacilities using parkFacilities and tempParkID
 				ParkFacilities pf = new ParkFacilities(tempParkID.toString(), parkFacilities);
 				p.setParkFacilities(pf);
 				
@@ -157,21 +176,22 @@ public class ParksListingParser {
 				
 				
 				// FOR TESTING
-//				System.out.println("**************");
-//				System.out.println("Park ID: " + tempParkID.toString());
-//				System.out.println(tempParkName.toString());
-//				System.out.println(tempStreetName.toString());
-//				System.out.println(tempGoogleMapDest.toString());
-//				System.out.println(tempNeighbourhoodName.toString());
-//				System.out.println("Facilities:");
-//				for (Facility f: parkFacilities) {
-//					System.out.println(f.getFacilityType());
-//					System.out.println(f.getFacilityCount());
-//				}
-//				
-//				
-//				System.out.println("There are " + parkCount + " Parks in Vancouver");
-//				System.out.println("There are " + tempInitialParks.size() + " Park objects in tempInitialParks");
+				System.out.println("**************");
+				System.out.println("Park ID: " + tempParkID.toString());
+				System.out.println(tempParkName.toString());
+				System.out.println(tempStreetName.toString());
+				System.out.println(tempStreetNumber.toString());
+				System.out.println(tempGoogleMapDest.toString());
+				System.out.println(tempNeighbourhoodName.toString());
+				System.out.println("Facilities:");
+				for (Facility f: parkFacilities) {
+					System.out.println(f.getFacilityType());
+					System.out.println(f.getFacilityCount());
+				}
+				
+				
+				System.out.println("There are " + parkCount + " Parks in Vancouver");
+				System.out.println("There are " + tempInitialParks.size() + " Park objects in tempInitialParks");
 				
 			}
 
@@ -194,7 +214,9 @@ public class ParksListingParser {
 		String[] theLatAndTheLong = googleMapDest.split(",");
 		String theLat = theLatAndTheLong[0];
 		String theLong = theLatAndTheLong[1];
-		LatLong theLatLong = new LatLong(Float.parseFloat(theLat), Float.parseFloat(theLong)); 
+		LatLong theLatLong = new LatLong( ); 
+		theLatLong.setLat(Float.parseFloat(theLat));
+		theLatLong.setLong(Float.parseFloat(theLong));
 		return theLatLong;
 		}
 		

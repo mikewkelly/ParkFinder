@@ -19,7 +19,7 @@ public class Park implements Serializable{
 	private String name;
 	
 	@Persistent
-	private int streetNumber;
+	private String streetNumber;
 	
 	@Persistent
 	private String streetName;
@@ -55,7 +55,7 @@ public class Park implements Serializable{
 		return name;
 	}
 	
-	public int getStreetNumber() {
+	public String getStreetNumber() {
 		return streetNumber;
 	}
 	
@@ -89,7 +89,7 @@ public class Park implements Serializable{
 		name = theName;
 	}
 	
-	public void setStreetNumber(int theNumber) {
+	public void setStreetNumber(String theNumber) {
 		streetNumber = theNumber;
 	}
 	

@@ -8,15 +8,17 @@
   </welcome-file-list>
 
   <servlet>
-    <servlet-name>parkServiceImpl</servlet-name>
+    <servlet-name>parkService</servlet-name>
     <servlet-class>com.cpsc310.team_name.parkfinder.server.ParkServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>parkServiceImpl</servlet-name>
+    <servlet-name>parkService</servlet-name>
     <url-pattern>/parkfinder/parkservice</url-pattern>
   </servlet-mapping>
   
+ 
+
   <servlet>
     <servlet-name>SystemServiceServlet</servlet-name>
     <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
