@@ -114,6 +114,8 @@ public class ParkFinder implements EntryPoint {
 	}
 	
 	private void displayAll() {
+		successMsg.setText("Getting data from server...");
+    	successMsg.setVisible(true);
 		parkService.getParks(new AsyncCallback<Park[]>() {
 			public void onFailure(Throwable error) {
 				errorMessage.setText("Error: failed to receive data from server");
@@ -122,7 +124,6 @@ public class ParkFinder implements EntryPoint {
 		    public void onSuccess(Park[] parks) {
 		    	successMsg.setText("Getting data from server...");
 		    	successMsg.setVisible(true);
-
 		    	for(Park p:parks) {
 		    		if(!parklist.contains(p.getParkId())) {
 		    		parklist.add(p.getParkId());
@@ -146,7 +147,7 @@ public class ParkFinder implements EntryPoint {
 		parkTable.setText(row, 0, park.getName());
 		parkTable.setText(row, 1, park.getNeighbourhoodName());
 		parkTable.setText(row, 2, String.valueOf(park.getStreetNumber().concat(" ").concat(park.getStreetName())));	
-		
+		parkTable.setText(row, 3, park.getParkFacilities());
 		//parkTable.setText(row, 3, String.valueOf(park.getStreetName()));
 		//parkTable.setText(row, 4, String.valueOf(park.getGoogleMapDest().getLat())
 			//	+String.valueOf(park.getGoogleMapDest().getLong()));

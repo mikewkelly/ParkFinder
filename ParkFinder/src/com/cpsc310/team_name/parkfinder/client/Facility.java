@@ -6,6 +6,7 @@ import java.io.Serializable;
 public class Facility implements Serializable{
 	
 	private String facilityType;
+	
 	private int facilityCount;
 	
 	public Facility(){

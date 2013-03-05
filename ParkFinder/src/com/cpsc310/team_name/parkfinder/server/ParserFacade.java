@@ -5,14 +5,14 @@ import com.cpsc310.team_name.parkfinder.client.Park;
 
 
 public class ParserFacade {
-	
+
 	private ParksListingParser plParser;
 	private WeekendPlayfieldStatusParser wpfsParser;
 	private ArrayList<Park> initialParks;
 	private ArrayList<Park> updatedParks;
-	
+
 	public ParserFacade() {
-		
+
 	}
 	/**Called to generate an ArrayList of complete Park objects based upon
 	 * data collected from CoV databases
@@ -24,12 +24,12 @@ public class ParserFacade {
 		// based upon CoV Park Listing data
 		plParser = new ParksListingParser();
 		initialParks = plParser.parse();
-		
+
 		// Create a new WPFS Parser with initial park data to get an updated 
 		// ArrayList of Park objects, which includes data concerning ParkAreas
 		wpfsParser = new WeekendPlayfieldStatusParser(initialParks);
 		updatedParks = wpfsParser.parse();
-		
+
 		return updatedParks;
 	}
 }

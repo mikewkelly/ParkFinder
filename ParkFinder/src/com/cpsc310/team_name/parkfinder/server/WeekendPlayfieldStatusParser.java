@@ -24,7 +24,7 @@ public class WeekendPlayfieldStatusParser {
 	private ArrayList<Area> allAreas;
 	private ArrayList<Park> updatedParks;
 	private ArrayList<ParkAreas> parkAreasList;
-	
+
 	public WeekendPlayfieldStatusParser(ArrayList<Park> theInitialParks) {
 		initialParks = theInitialParks;
 	}
@@ -51,8 +51,6 @@ public class WeekendPlayfieldStatusParser {
 	 *         Data Catalogue
 	 */
 
-	
-
 	/**
 	 * Called to parse an XML String and create ParkFacilities and ParkAreas instances with
 	 * the data
@@ -61,36 +59,34 @@ public class WeekendPlayfieldStatusParser {
 	 *            The XML file to be parsed
 	 */
 	private ArrayList<Area> parseXML() {
-		
+
 		ArrayList<Area> theAreas = new ArrayList<Area>();
-		
+
 		try {
 
-		
 		URL url = new URL(
-					"https://docs.google.com/file/d/0B3QwW7YpNfjBdExCYjlYaTRydnc/edit?usp=sharing");
+					"http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 					url.openStream()));
-			
+
 		InputSource inputSource = new InputSource(reader);
-			
+
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document fileDom = dBuilder.parse(inputSource);
 		reader.close();
-			
 
 		Element element = fileDom.getDocumentElement();
 		NodeList parkNodeList = element.getElementsByTagName("Park");
 		final int parkCount = parkNodeList.getLength();
-	
+
 		// Initialize the Accumulators used to hold data needed for construction of Park instances
 		StringBuffer tempParkID = new StringBuffer();
 		StringBuffer tempSiteArea = new StringBuffer();
 		StringBuffer tempClosureNotes = new StringBuffer();
 		StringBuffer tempWeekendStatus = new StringBuffer();
 		StringBuffer tempLastUpdated = new StringBuffer();
-		
+
 		// Iterate over every "Park" node
 		for (int i = 0; i < parkCount; i++ ) {
 			// clear the accumulators
@@ -99,48 +95,45 @@ public class WeekendPlayfieldStatusParser {
 			tempClosureNotes.setLength(0);
 			tempWeekendStatus.setLength(0);
 			tempLastUpdated.setLength(0);
-			
+
 //			//Get the ID of the park
 			Node parkNode = parkNodeList.item(i);
 			tempParkID.append(((Element) parkNode).getAttribute("ID"));
-			
+
 			Element parkContents = (Element) parkNodeList.item(i); // parkContents is an individual park node's contents
-			
+
 			// get the site area
 			// ERROR HERE
 //			tempSiteArea.append(parkContents.getElementsByTagName("SiteArea").item(0).getFirstChild().getNodeValue());
 
 			// get the closure notes
 //			tempClosureNotes.append(parkContents.getElementsByTagName("ClosureNotes").item(0).getFirstChild().getNodeValue());
-			
+
 //			// get the weekend status
 //			tempWeekendStatus.append(parkContents.getElementsByTagName("WeekendStatus").item(0).getFirstChild().getNodeValue());
-			
+
 			// get last updated
 //			tempLastUpdated.append(parkContents.getElementsByTagName("LastUpdated").item(0).getFirstChild().getNodeValue());
-			
+
 			// to HERE
-			
-			
+
 			// Construct a new Area instance using accumulator values
-			
+
 			Area a = new Area(tempParkID.toString(), tempSiteArea.toString());
 			a.setClosureNotes(tempClosureNotes.toString());
 			a.setWeekendStatus(tempWeekendStatus.toString());
 			a.setLastUpdated(tempLastUpdated.toString());
 
 			// Add the area to theAreas
-			
+
 			theAreas.add(a);
 		}
-		
+
 		} catch (Exception e) {
 			System.out.println("Could not parse XML document");
 		}
-		
 
-		
-			return theAreas;
+		return theAreas;
 
 	}
 	/**
@@ -154,7 +147,7 @@ public class WeekendPlayfieldStatusParser {
 		ArrayList<Area> areas = theAreas;
 		StringBuffer tempParkId = new StringBuffer();
 		ArrayList<String> ids = new ArrayList<String>();
-		
+
 		// Populate a list of unique Park Ids
 		for (int i = 0; i < areas.size(); i++ ) {
 			tempParkId.setLength(0);
@@ -180,7 +173,7 @@ public class WeekendPlayfieldStatusParser {
 					parkAreasList.get(i).addArea(a);
 				}
 			}
-		
+
 		}
 
 		return parkAreasList;
@@ -206,6 +199,6 @@ public class WeekendPlayfieldStatusParser {
 		}
 		return parks;
 	}
-	
+
 
 }

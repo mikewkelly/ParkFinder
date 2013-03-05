@@ -1,18 +1,17 @@
 package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Park implements Serializable{
 	
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private String parkId;
 	
 	@Persistent
@@ -24,14 +23,16 @@ public class Park implements Serializable{
 	@Persistent
 	private String streetName;
 	
-	@Persistent(serialized = "true")
-	private LatLong googleMapDest;
+	//@Persistent(serialized = "true")
+	//private LatLong googleMapDest;
+	@Persistent
+	private String googleMapDest;
 	
 	@Persistent
 	private String neighbourhoodName;
 	
-	@Persistent(serialized = "true")
-	private ParkFacilities parkFacilities;
+	@Persistent
+	private String parkFacilities;
 	
 	@Persistent(serialized = "true")
 	private ParkAreas parkAreas;
@@ -41,7 +42,6 @@ public class Park implements Serializable{
 		// default constructor
 	}
 	
-
 	public Park(String theParkId) {
 
 		parkId = theParkId;
@@ -63,7 +63,7 @@ public class Park implements Serializable{
 		return streetName;
 	}
 	
-	public LatLong getGoogleMapDest() {
+	public String getGoogleMapDest() {
 		return googleMapDest;
 	}
 	
@@ -71,7 +71,7 @@ public class Park implements Serializable{
 		return neighbourhoodName;
 	}
 	
-	public ParkFacilities getParkFacilities() {
+	public String getParkFacilities() {
 		return parkFacilities;
 	}
 	
@@ -97,7 +97,7 @@ public class Park implements Serializable{
 		streetName = theName;
 	}
 	
-	public void setGoogleMapDest(LatLong theGMD) {
+	public void setGoogleMapDest(String theGMD) {
 		googleMapDest = theGMD;
 	}
 	
@@ -105,13 +105,12 @@ public class Park implements Serializable{
 		neighbourhoodName = theName;
 	}
 	
-	public void setParkFacilities(ParkFacilities theFacilities) {
+	public void setParkFacilities(String theFacilities) {
 		parkFacilities = theFacilities;
 	}
 	
 	public void setParkAreas(ParkAreas theAreas){
 		parkAreas = theAreas;
 	}
-
 
 }

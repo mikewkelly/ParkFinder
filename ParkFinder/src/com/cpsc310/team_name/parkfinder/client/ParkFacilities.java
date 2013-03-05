@@ -2,14 +2,23 @@ package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
 @SuppressWarnings("serial")
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class ParkFacilities implements Serializable {
 	
-
+	@Persistent
 	private String parkId;
+	
+	@Persistent
 	private int facilityCount;
-	private ArrayList<Facility> facilities;
+	
+	@Persistent
+	private ArrayList<String> facilities;
 	
 
 	public ParkFacilities(){
@@ -17,11 +26,11 @@ public class ParkFacilities implements Serializable {
 	}
 	
 	
-	public ParkFacilities(String id, ArrayList<Facility> theFacilities) {
+	public ParkFacilities(String id, ArrayList<String> theFacilities) {
 
 		parkId = id;
 		facilities = theFacilities;	
-		facilityCount = facilities.size();
+		//facilityCount = facilities.size();
 	}
 	
 
@@ -42,7 +51,7 @@ public class ParkFacilities implements Serializable {
 	// I think for this we just return the size of the list
 	// so we don't need the extra attribute?
 	public int getFacilityCount() {
-		return facilityCount;
+		return facilities.size();
 	}
 	
 
@@ -52,29 +61,29 @@ public class ParkFacilities implements Serializable {
 	}
 	
 
-	public ArrayList<Facility> getFacilities() {
+	public ArrayList<String> getFacilities() {
 		return facilities;
 	}
 	
-	public void addFacility(Facility theFacility) {
+	public void addFacility(String theFacility) {
 		facilities.add(theFacility);
 		facilityCount++;
 	}
 	
-	public void removeFacility(Facility theFacility) {
+	public void removeFacility(String theFacility) {
 
 		for(int i=0;i<facilities.size();i++) {
-			if(facilities.get(i).getFacilityType().equals(theFacility.getFacilityType())) {
+			if(facilities.get(i).equals(theFacility)) {
 				facilities.remove(i);
 				facilityCount--;
 			}
 		}
 	}
 	
-	public boolean containsFacility(Facility theFacility) {
+	public boolean containsFacility(String theFacility) {
 
-		for(Facility f:facilities) {
-			if(f.getFacilityType().equals(theFacility.getFacilityType())) {
+		for(String f:facilities) {
+			if(f.equals(theFacility)) {
 				return true;
 			}
 		}
