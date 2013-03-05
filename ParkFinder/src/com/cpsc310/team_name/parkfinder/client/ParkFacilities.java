@@ -32,7 +32,6 @@ public class ParkFacilities implements Serializable {
 		facilities = theFacilities;	
 		//facilityCount = facilities.size();
 	}
-	
 
 	// I think this method is unnecessary since id is set when it is created
 	// using the constructor
@@ -46,15 +45,11 @@ public class ParkFacilities implements Serializable {
 	//	facilityCount = count;
 	//}
 	
-
-	
 	// I think for this we just return the size of the list
 	// so we don't need the extra attribute?
 	public int getFacilityCount() {
 		return facilities.size();
 	}
-	
-
 
 	public String getParkId() {
 		return parkId;

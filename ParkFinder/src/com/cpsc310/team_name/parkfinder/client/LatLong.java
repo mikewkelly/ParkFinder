@@ -11,6 +11,7 @@ public class LatLong implements Serializable {
 
 	public LatLong() {
 		super();
+
 	}
 	
 	public float getLat() {
@@ -20,6 +21,7 @@ public class LatLong implements Serializable {
 	public float getLong() {
 		return this.longitude;
 	}
+
 	public void setLat(float lat){
 		this.latitude=lat;
 	}

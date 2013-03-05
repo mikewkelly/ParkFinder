@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class ParkAreas implements Serializable {
-	
 
 	private String parkId;
 	private int areaCount;

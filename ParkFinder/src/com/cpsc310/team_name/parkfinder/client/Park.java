@@ -36,7 +36,6 @@ public class Park implements Serializable{
 	
 	@Persistent(serialized = "true")
 	private ParkAreas parkAreas;
-	
 
 	public Park() {
 		// default constructor
