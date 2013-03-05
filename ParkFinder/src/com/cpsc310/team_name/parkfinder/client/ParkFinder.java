@@ -34,7 +34,7 @@ public class ParkFinder implements EntryPoint {
 	private Label lastUpdateLabel = new Label();
 	private Label errorMessage = new Label();
 	private Label successMsg = new Label();
-	private ArrayList<Park> parklist = new ArrayList<Park>();
+	private ArrayList<String> parklist = new ArrayList<String>();
 	
 	private Button importDataButton = new Button("Import");
 	
@@ -54,10 +54,10 @@ public class ParkFinder implements EntryPoint {
 		parkTable.setText(0,0,"Park ID");
 		parkTable.setText(0,1,"Park Name");
 		parkTable.setText(0,2,"Neighbourhood");
-		parkTable.setText(0,3,"Street Number");
+		parkTable.setText(0,3,"Address");
 		parkTable.setText(0,4,"GoogleMapDest");
 		parkTable.setText(0,5,"Facilities");
-		parkTable.setText(0,6,"Area");
+		//parkTable.setText(0,6,"Area");
 		
 		parkTable.getRowFormatter().addStyleName(0, "parkListHeader");
 		parkTable.addStyleName("parkList");
@@ -113,17 +113,19 @@ public class ParkFinder implements EntryPoint {
 	}
 	
 	private void displayAll() {
+		successMsg.setText("Getting data from server...");
+    	successMsg.setVisible(true);
 		parkService.getParks(new AsyncCallback<Park[]>() {
 			public void onFailure(Throwable error) {
 				errorMessage.setText("Error: failed to receive data from server");
 				errorMessage.setVisible(true);
 			}
 		    public void onSuccess(Park[] parks) {
-		    	successMsg.setText("Getting data from server...");
-		    	successMsg.setVisible(true);
 		    	for(Park p:parks) {
-		    		parklist.add(p);
-		    		showParkInTable(p);
+		    		if(!parklist.contains(p.getParkId())) {
+		    			parklist.add(p.getParkId());
+		    			showParkInTable(p);
+		    		}
 		    	}
 		    	successMsg.setText("Parks Displayed");
 			}
@@ -133,17 +135,13 @@ public class ParkFinder implements EntryPoint {
 	private void showParkInTable(Park park) {
 		int row = parkTable.getRowCount();
 		
-		//String parkfacilities = "";
-		//for(Facility s:park.getParkFacilities().getFacilities()) {
-			//parkfacilities = parkfacilities + s.getFacilityType() + " ";
-		//}
+		
 		parkTable.setText(row, 0, park.getParkId());
 		parkTable.setText(row, 1, park.getName());
-		//parkTable.setText(row, 2, park.getNeighbourhoodName());
-		//parkTable.setText(row, 3, String.valueOf(park.getStreetNumber()));
-		//parkTable.setText(row, 4, String.valueOf(park.getGoogleMapDest().getLat())
-			//	+String.valueOf(park.getGoogleMapDest().getLong()));
-		//parkTable.setText(row, 5, parkfacilities);
+		parkTable.setText(row, 2, park.getNeighbourhoodName());
+		parkTable.setText(row, 3, park.getStreetNumber() + "," + park.getStreetName()); 
+		parkTable.setText(row, 4, "("+park.getGoogleMapDest()+")");
+		parkTable.setText(row, 5, park.getParkFacilities());
 		
 
 	}

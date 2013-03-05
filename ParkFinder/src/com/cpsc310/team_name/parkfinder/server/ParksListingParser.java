@@ -1,22 +1,21 @@
 package com.cpsc310.team_name.parkfinder.server;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import com.cpsc310.team_name.parkfinder.client.Facility;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+//import com.cpsc310.team_name.parkfinder.client.Facility;
 import com.cpsc310.team_name.parkfinder.client.LatLong;
 import com.cpsc310.team_name.parkfinder.client.Park;
-import com.cpsc310.team_name.parkfinder.client.ParkFacilities;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.xml.client.DOMException;
-import com.google.gwt.xml.client.Document;
-import com.google.gwt.xml.client.Element;
-import com.google.gwt.xml.client.Node;
-import com.google.gwt.xml.client.NodeList;
-import com.google.gwt.xml.client.XMLParser;
+//import com.cpsc310.team_name.parkfinder.client.ParkFacilities;
 
 public class ParksListingParser {
 
@@ -25,70 +24,38 @@ public class ParksListingParser {
 	private ArrayList<Park> initialParks = new ArrayList<Park>();
 
 	public ParksListingParser() {
-		
+
 	}
 
 	public ArrayList<Park> parse() {
-		String xmlString = downloadXMLString();
-		initialParks = parseXML(xmlString);
+		initialParks = parseXML();
 		return initialParks;
 	}
 
 	/**
-	 * Called to return the Parks Listing data from the CoV server from URL:
-	 * ftp://webftp.vancouver.ca/opendata/xml/parks_facilities.xml
-	 * 
-	 * @return a String representing the XML file from the City of Vancouver
-	 *         Data Catalogue
-	 */
-
-	private String downloadXMLString() {
-		String file = new String();
-		StringBuffer tempFile = new StringBuffer();
-
-		tempFile.setLength(0); // initialise the StringBuffer
-
-		try {
-			URL url = new URL(
-					"http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					url.openStream()));
-			String individualLine;
-
-			while ((individualLine = reader.readLine()) != null) { // while
-																	// non-empty
-																	// lines
-																	// exist:
-				tempFile.append(individualLine); // read each line and add it to
-													// tempFile
-			}
-
-			reader.close();
-
-		} catch (MalformedURLException e) {
-			// Do nothing
-		} catch (IOException e) {
-			// Do nothing
-		}
-
-		file = tempFile.toString();
-		return file;
-	}
-
-	/**
-	 * Called to parse an XML String and create individual Park instances with
+	 * Called to parse a remote XML file and create individual Park instances with
 	 * the data
 	 * 
 	 * @param file The XML file to be parsed
 	 *            
 	 */
-	private ArrayList<Park> parseXML(String file) {
-		
+	private ArrayList<Park> parseXML() {
+
 		ArrayList<Park> tempInitialParks = new ArrayList<Park>();
 
 		try {
-			// Convert XML String to DOM
-			Document fileDom = XMLParser.parse(file);
+
+			URL url = new URL(
+					"http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					url.openStream()));
+
+			InputSource inputSource = new InputSource(reader);
+
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document fileDom = dBuilder.parse(inputSource);
+			reader.close();
 
 			Element element = fileDom.getDocumentElement();
 			NodeList parkNodeList = element.getElementsByTagName("Park");
@@ -101,7 +68,10 @@ public class ParksListingParser {
 			StringBuffer tempStreetNumber = new StringBuffer();
 			StringBuffer tempGoogleMapDest = new StringBuffer();
 			StringBuffer tempNeighbourhoodName = new StringBuffer();
-			
+			StringBuffer tempFacilities = new StringBuffer();
+			StringBuffer tempFacilityCount = new StringBuffer();
+
+
 			 // iterate over every "Park" node	
 			for (int i = 0; i < parkCount; i++) {	
 				// Clear the contents of each Accumulator
@@ -111,86 +81,112 @@ public class ParksListingParser {
 				tempStreetNumber.setLength(0);
 				tempGoogleMapDest.setLength(0);
 				tempNeighbourhoodName.setLength(0);
-				
+				tempFacilities.setLength(0);
+				tempFacilityCount.setLength(0);
+
 				// create an ArrayList to hold the facilities for the park
-				ArrayList<Facility> parkFacilities = new ArrayList<Facility>();
+				ArrayList<String> parkFacilities = new ArrayList<String>();
 				parkFacilities.clear();
-				
+
 				//Get the ID of the park node
 				Node parkNode = parkNodeList.item(i);
 				tempParkID.append(((Element) parkNode).getAttribute("ID"));
-
+				Park p = new Park(tempParkID.toString());
 				Element parkContents = (Element) parkNodeList.item(i); // parkContents is an individual park node's contents
 
 				// get the name of the park
 				tempParkName.append(parkContents.getElementsByTagName("Name").item(0).getFirstChild().getNodeValue());
-				
+
+
+				// THIS IS WHERE THE ERROR IS -NumberFormatException gets thrown
 				// get the street number
-				tempStreetNumber.append(parkContents.getElementsByTagName("StreetNumber").item(0).getFirstChild().getNodeValue());
 				
+				try {
+					tempStreetNumber.append(parkContents.getElementsByTagName("StreetNumber").item(0).getFirstChild().getNodeValue());			
+				} catch (Exception e) {
+					System.out.println("Street Number Does not Exist For This Park:" + tempParkID.toString());
+					tempStreetNumber.append("N/A");
+				}
+				// END OF ERROR
+
+
 				// get the name of the street
 				tempStreetName.append(parkContents.getElementsByTagName("StreetName").item(0).getFirstChild().getNodeValue());
-				
+
 				// get the GoogleMapDest
 				tempGoogleMapDest.append(parkContents.getElementsByTagName("GoogleMapDest").item(0).getFirstChild().getNodeValue());
-				
+
 				// get the neighbourhood name
 				tempNeighbourhoodName.append(parkContents.getElementsByTagName("NeighbourhoodName").item(0).getFirstChild().getNodeValue());
 
 				// get the facilities data - NOTE: Parks may have 0..n facility type and 1..n facility count of each facility type
-
+				for(int j=0;j<parkContents.getElementsByTagName("FacilityType").getLength();j++) {
+					try {
+						tempFacilities.append(parkContents.getElementsByTagName("FacilityType").item(j).getFirstChild().getNodeValue());
+						tempFacilities.append("(");
+						tempFacilities.append(parkContents.getElementsByTagName("FacilityCount").item(j).getFirstChild().getNodeValue());
+						tempFacilities.append(")");
+					} catch (Exception e) {
+						System.out.println("No Facility Found:" + tempParkID.toString());
+						tempFacilities.append("N/A");
+					}
+				}
 				// Get a Node list of all the facilities for this individual park
-				NodeList facilityNodeList = parkContents.getElementsByTagName("Facility");
-				int facilityTypeCount = facilityNodeList.getLength();
-				
+				//NodeList facilityNodeList = parkContents.getElementsByTagName("FacilityType");
+				//int facilityTypeCount = facilityNodeList.getLength();
 				// initialize the accumulators
-				StringBuffer tempFacilityType = new StringBuffer();
-				StringBuffer tempFacilityCount = new StringBuffer();
+				//StringBuffer tempFacilityType = new StringBuffer();
+				//StringBuffer tempFacilityCount = new StringBuffer();
 				
 				// iterate over the facilityNodeList, collecting data on each type of facility for this individual park
+				/*
 				for (int j = 0; j < facilityTypeCount; j++) {
-					
+
 					// reset the accumulators
-					tempFacilityType.setLength(0);
-					tempFacilityCount.setLength(0);
-					
+					//tempFacilityType.setLength(0);
+					//tempFacilityCount.setLength(0);
+
 					Element facilityContents = (Element) facilityNodeList.item(j); // facilityContents is an individual facility node's contents
 					// get the facility type
-					tempFacilityType.append(facilityContents.getElementsByTagName("FacilityType").item(0).getFirstChild().getNodeValue());
+					//tempFacilityType.append(facilityContents.getElementsByTagName("FacilityType").item(0).getFirstChild().getNodeValue());
 					// get the facility count
-					tempFacilityCount.append(facilityContents.getElementsByTagName("FacilityCount").item(0).getFirstChild().getNodeValue());
-					
+					//tempFacilityCount.append(facilityContents.getElementsByTagName("FacilityCount").item(0).getFirstChild().getNodeValue());
+					String type = facilityContents.getNodeValue();
 					// create a new Facility instance and add it to parkFacilities
-					int tempFacilityCountAsInt = Integer.parseInt(tempFacilityCount.toString());
-					Facility f = new Facility(tempFacilityType.toString(), tempFacilityCountAsInt);
-					parkFacilities.add(f);
-				
-				}
-				
+					//int tempFacilityCountAsInt = Integer.parseInt(tempFacilityCount.toString());
+					//Facility f = new Facility(tempFacilityType.toString(), tempFacilityCountAsInt);
+					//parkFacilities.add(f);
+					facilities.concat(type).concat(" ");
+					//facilities.concat(" ").concat(tempFacilityCount.toString()).concat(" ");
+
+				}*/
 				// Construct a new Park instance using collected data and add it to initialParks
-				
-				Park p = new Park(tempParkID.toString());
+
+				//Park p = new Park(tempParkID.toString());
 				p.setName(tempParkName.toString());
 				p.setStreetName(tempStreetName.toString());
-				p.setStreetNumber(Integer.parseInt(tempStreetNumber.toString()));
-				LatLong theLatLong = convertGMDtoLatLong(tempGoogleMapDest.toString());
-				p.setGoogleMapDest(theLatLong);
+				p.setStreetNumber(tempStreetNumber.toString());
+				
+				//LatLong theLatLong = convertGMDtoLatLong(tempGoogleMapDest.toString());
+				p.setGoogleMapDest(tempGoogleMapDest.toString());
 				p.setNeighbourhoodName(tempNeighbourhoodName.toString());
 				// Create an instance of ParkFacilities using parkFacilities and tempParkID
-				ParkFacilities pf = new ParkFacilities(tempParkID.toString(), parkFacilities);
-				p.setParkFacilities(pf);
-				
+				//ParkFacilities pf = new ParkFacilities(tempParkID.toString(), parkFacilities);
+				p.setParkFacilities(tempFacilities.toString());
 				//add p to initialParks
 				tempInitialParks.add(p);
+
 			}
 
-		} catch (DOMException e) {
-			Window.alert("Could not parse XML document");
+		} catch (Exception e) {
+			System.out.println("Could not parse XML document: "+e.getMessage());
 		} 
-		
+
+
+
 		return tempInitialParks;	
 	}
-	
+
 	/**
 	 * Called to convert a single-string googleMapDest to a LatLong object
 	 * 
@@ -204,6 +200,5 @@ public class ParksListingParser {
 		LatLong theLatLong = new LatLong(Float.parseFloat(theLat), Float.parseFloat(theLong)); 
 		return theLatLong;
 		}
-		
-	}
 
+	}
