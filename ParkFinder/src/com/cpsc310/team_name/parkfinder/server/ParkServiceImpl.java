@@ -10,7 +10,9 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
+import com.cpsc310.team_name.parkfinder.client.Facility;
 import com.cpsc310.team_name.parkfinder.client.Park;
+import com.cpsc310.team_name.parkfinder.client.ParkFacilities;
 import com.cpsc310.team_name.parkfinder.client.ParkService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -42,12 +44,15 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Park> park = new ArrayList<Park>();
 		
-		// test
-		//-----
-		Park aPark = new Park("test_Id");
-		aPark.setName("test_name");
-		pm.makePersistent(aPark);
-		//-----
+		//Park aPark = testParks("test_id", "test_name", "test_nbh",
+		//		"123", "Test Street");
+		/*Park aPark = new Park("test_id");
+		aPark.setName("test name");
+		aPark.setNeighbourhoodName("test_nbh");
+		aPark.setStreetNumber("123");
+		aPark.setStreetName("Test Street");
+		pm.makePersistent(aPark);*/
+
 		try{
 			Query q = pm.newQuery(Park.class);
 			q.setOrdering("name");
@@ -55,6 +60,8 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 			for (Park p:parks){
 				park.add(p);
 			}
+			/*aPark.setName("test_name_updated");
+			JDOHelper.makeDirty(aPark, aPark.getName());*/
 		}finally{
 			pm.close();
 		}
@@ -94,5 +101,20 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 			pm.close();
 		}
 	}
+	
+	/*public Park testParks(String id, String name,
+			String neighbourhood, String streetNo, String streetName) {
+		// test
+		//-----
+		PersistenceManager pm = getPersistenceManager();
+		Park aPark = new Park(id);
+		aPark.setName(name);
+		aPark.setNeighbourhoodName(neighbourhood);
+		aPark.setStreetNumber(streetNo);
+		aPark.setStreetName(streetName);
+		pm.makePersistent(aPark);
+		return aPark;
+		//-----
+	}*/
 
 }

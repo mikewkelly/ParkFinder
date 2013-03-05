@@ -6,5 +6,4 @@ public interface ParkServiceAsync {
 	public void removePark(String parkId, AsyncCallback<Void> async);
 	public void getParks(AsyncCallback<Park[]> async);
 	public void importParks(AsyncCallback<Void> async);
-	
 }

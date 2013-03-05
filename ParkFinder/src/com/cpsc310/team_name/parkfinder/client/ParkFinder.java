@@ -31,12 +31,12 @@ public class ParkFinder implements EntryPoint {
 	private HorizontalPanel addPanel = new HorizontalPanel();
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private TextBox searchCriteriaTextBox = new TextBox();
-	private Button displayAllButton = new Button("DisplayAll");
+	private Button displayAllButton = new Button("Display All");
 	private Button searchButton = new Button("Search");
 	private Label lastUpdateLabel = new Label();
 	private Label errorMessage = new Label();
 	private Label successMsg = new Label();
-	private ArrayList<Park> parklist = new ArrayList<Park>();
+	private ArrayList<String> parklist = new ArrayList<String>();
 	
 	private Button importDataButton = new Button("Import");
 	
@@ -54,11 +54,10 @@ public class ParkFinder implements EntryPoint {
 		//parkTable.setText(0,0,"Park ID");
 		parkTable.setText(0,0,"Park Name");
 		parkTable.setText(0,1,"Neighbourhood");
-		parkTable.setText(0,2,"Street No.");
-		parkTable.setText(0,3,"Street Name");
-		//parkTable.setText(0,4,"GoogleMapDest");
-		parkTable.setText(0,4,"Facilities");
-		parkTable.setText(0,5,"Weekend Status");
+		parkTable.setText(0,2,"Address");
+		//parkTable.setText(0,3,"GoogleMapDest");
+		parkTable.setText(0,3,"Facilities");
+		parkTable.setText(0,4,"Weekend Status");
 		//parkTable.setText(0,6,"Area");
 		
 		parkTable.getRowFormatter().addStyleName(0, "parkListHeader");
@@ -114,12 +113,6 @@ public class ParkFinder implements EntryPoint {
 		});
 	}
 	
-	/* BUG: Hitting displayAll() multiple times creates copies of the list
-	 * which are appended to the end of the list.
-	 * PROBABLE CAUSE: the for loop (and showParkInTable()) will generate
-	 * a new copy because it doesn't check to see if the parks are already
-	 * in the table.
-	 */	
 	private void displayAll() {
 		parkService.getParks(new AsyncCallback<Park[]>() {
 			public void onFailure(Throwable error) {
@@ -131,9 +124,11 @@ public class ParkFinder implements EntryPoint {
 		    	successMsg.setVisible(true);
 
 		    	for(Park p:parks) {
-		    		parklist.add(p);
+		    		if(!parklist.contains(p.getParkId())) {
+		    		parklist.add(p.getParkId());
 		    		showParkInTable(p);
 		    		}
+	    		}
 		    	
 		    	successMsg.setText("Parks Displayed: " + parklist.size());
 			}
@@ -150,8 +145,9 @@ public class ParkFinder implements EntryPoint {
 		//parkTable.setText(row, 0, park.getParkId());
 		parkTable.setText(row, 0, park.getName());
 		parkTable.setText(row, 1, park.getNeighbourhoodName());
-		parkTable.setText(row, 2, String.valueOf(park.getStreetNumber()));
-		parkTable.setText(row, 3, String.valueOf(park.getStreetName()));
+		parkTable.setText(row, 2, String.valueOf(park.getStreetNumber().concat(" ").concat(park.getStreetName())));	
+		
+		//parkTable.setText(row, 3, String.valueOf(park.getStreetName()));
 		//parkTable.setText(row, 4, String.valueOf(park.getGoogleMapDest().getLat())
 			//	+String.valueOf(park.getGoogleMapDest().getLong()));
 		//parkTable.setText(row, 5, parkfacilities);
