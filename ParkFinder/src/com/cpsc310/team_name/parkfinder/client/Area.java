@@ -11,15 +11,15 @@ public class Area implements Serializable {
 	private String weekendStatus;
 	private String lastUpdated;
 	
-	public Area(String theParkId) {
-		parkId = theParkId;
+	public Area() {
+		
 	}
 	
 	public Area(String theParkId, String anArea) {
 		parkId = theParkId;
 		siteArea = anArea;
 	}
-
+	
 	public String getParkId() {
 		return parkId;
 	}

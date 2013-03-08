@@ -147,7 +147,7 @@ public class ParkFinder implements EntryPoint {
 		parkTable.setText(row, 0, park.getName());
 		parkTable.setText(row, 1, park.getNeighbourhoodName());
 		parkTable.setText(row, 2, String.valueOf(park.getStreetNumber().concat(" ").concat(park.getStreetName())));	
-		parkTable.setText(row, 3, park.getParkFacilities());
+//		parkTable.setText(row, 3, park.getParkFacilities());
 		//parkTable.setText(row, 3, String.valueOf(park.getStreetName()));
 		//parkTable.setText(row, 4, String.valueOf(park.getGoogleMapDest().getLat())
 			//	+String.valueOf(park.getGoogleMapDest().getLong()));

@@ -193,7 +193,7 @@ public class WeekendPlayfieldStatusParser {
 			for (int i = 0; i < parkAreas.size(); i++ ){
 				// if the parkId for the park matches the parkId for the ParkAreas object
 				if (p.getParkId().equals(parkAreas.get(i).getParkId())) {
-					p.setParkAreas(parkAreas.get(i));
+//					p.setParkAreas(parkAreas.get(i));
 				}
 			}
 		}

@@ -1,11 +1,13 @@
 package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
+
+import java.util.ArrayList;
+
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
@@ -13,6 +15,7 @@ public class Park implements Serializable{
 	
 	@PrimaryKey
 	private String parkId;
+	
 	
 	@Persistent
 	private String name;
@@ -32,9 +35,9 @@ public class Park implements Serializable{
 	private String neighbourhoodName;
 	
 	@Persistent
-	private String parkFacilities;
+	private ArrayList<Facility> parkFacilities;
 	
-	@Persistent(serialized = "true")
+	@Persistent
 	private ParkAreas parkAreas;
 
 	public Park() {
@@ -70,19 +73,10 @@ public class Park implements Serializable{
 		return neighbourhoodName;
 	}
 	
-	public String getParkFacilities() {
-		return parkFacilities;
-	}
 	
 	public ParkAreas getParkAreas() {
 		return parkAreas;
 	}
-	
-	// this method is unnecessary because the parkId is used in the constructor
-//	public void setParkId(int theParkId) {
-//		parkId = theParkId;
-//	}
-//	
 	
 	public void setName(String theName) {
 		name = theName;
@@ -104,12 +98,52 @@ public class Park implements Serializable{
 		neighbourhoodName = theName;
 	}
 	
-	public void setParkFacilities(String theFacilities) {
+	// These methods deal with the Facilities
+	
+	public ArrayList<Facility> getParkFacilities() {
+		return parkFacilities;
+	}
+	
+	public void setParkFacilities(ArrayList<Facility> theFacilities) {
 		parkFacilities = theFacilities;
 	}
 	
-	public void setParkAreas(ParkAreas theAreas){
-		parkAreas = theAreas;
+	public void addFacility(Facility theFacility) {
+		if (!this.containsFacilityByType(theFacility.getFacilityType())) {
+			parkFacilities.add(theFacility);
+		}
 	}
+	
+	public Facility getFacilityByType(String theFacilityType) {
+		for (Facility f: parkFacilities) {
+			if (f.getFacilityType().equals(theFacilityType)) {
+				return f;
+			}
+		}
+		return new Facility("","",0); // can't return null in GWT, so return "blank" Facility
+	}
+	
+	
+	public boolean containsFacility(Facility theFacility) {
+		for(Facility f:parkFacilities) {
+			if( (f.getParkId().equals(theFacility.getParkId())) && (f.getFacilityType().equals(theFacility.getFacilityType()))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean containsFacilityByType(String theFacilityType) {
+		for (Facility f:parkFacilities) {
+			if (f.getFacilityType().toUpperCase().equals(theFacilityType.toUpperCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	// These methods deal with the Areas
+	
+	
 
 }

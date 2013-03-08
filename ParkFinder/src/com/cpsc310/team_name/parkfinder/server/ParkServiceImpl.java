@@ -12,7 +12,6 @@ import javax.jdo.Query;
 
 import com.cpsc310.team_name.parkfinder.client.Facility;
 import com.cpsc310.team_name.parkfinder.client.Park;
-import com.cpsc310.team_name.parkfinder.client.ParkFacilities;
 import com.cpsc310.team_name.parkfinder.client.ParkService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

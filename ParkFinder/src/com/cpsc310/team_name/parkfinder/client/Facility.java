@@ -5,6 +5,8 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Facility implements Serializable{
 	
+	private String parkId;
+	
 	private String facilityType;
 	
 	private int facilityCount;
@@ -14,9 +16,14 @@ public class Facility implements Serializable{
 	}
 
 
-	public Facility(String aFacilityType, int aFacilityCount) {
+	public Facility(String aParkId, String aFacilityType, int aFacilityCount) {
+		parkId = aParkId;
 		facilityType = aFacilityType;
 		facilityCount = aFacilityCount;
+	}
+	
+	public String getParkId() {
+		return parkId;
 	}
 	
 	public String getFacilityType() {
