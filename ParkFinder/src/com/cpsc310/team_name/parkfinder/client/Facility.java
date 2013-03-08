@@ -5,10 +5,9 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Facility implements Serializable{
 	
+	private String facilityId; //a unique value assigned to each Facility instance
 	private String parkId;
-	
 	private String facilityType;
-	
 	private int facilityCount;
 	
 	public Facility(){
@@ -16,10 +15,11 @@ public class Facility implements Serializable{
 	}
 
 
-	public Facility(String aParkId, String aFacilityType, int aFacilityCount) {
+	public Facility(String aParkId, String aFacilityType, int aFacilityCount, String aFacilityId) {
 		parkId = aParkId;
 		facilityType = aFacilityType;
 		facilityCount = aFacilityCount;
+		facilityId = aFacilityId;
 	}
 	
 	public String getParkId() {

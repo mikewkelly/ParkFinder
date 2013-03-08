@@ -1,9 +1,7 @@
 package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
-
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -15,7 +13,6 @@ public class Park implements Serializable{
 	
 	@PrimaryKey
 	private String parkId;
-	
 	
 	@Persistent
 	private String name;
@@ -38,7 +35,7 @@ public class Park implements Serializable{
 	private ArrayList<Facility> parkFacilities;
 	
 	@Persistent
-	private ParkAreas parkAreas;
+	private ArrayList<Area> parkAreas;
 
 	public Park() {
 		// default constructor
@@ -73,10 +70,6 @@ public class Park implements Serializable{
 		return neighbourhoodName;
 	}
 	
-	
-	public ParkAreas getParkAreas() {
-		return parkAreas;
-	}
 	
 	public void setName(String theName) {
 		name = theName;
@@ -120,7 +113,7 @@ public class Park implements Serializable{
 				return f;
 			}
 		}
-		return new Facility("","",0); // can't return null in GWT, so return "blank" Facility
+		return new Facility("","",0, ""); // can't return null in GWT, so return "blank" Facility
 	}
 	
 	
@@ -144,6 +137,26 @@ public class Park implements Serializable{
 	
 	// These methods deal with the Areas
 	
+	public ArrayList<Area> getParkAreas() {
+		return parkAreas;
+	}
+	
+	public void setParkAreas(ArrayList<Area> theAreas) {
+		parkAreas = theAreas;
+	}
+	
+	public void addArea(Area anArea) {	
+		parkAreas.add(anArea);
+	}
+	
+	public boolean containsArea(Area anArea) {
+		for (Area a: parkAreas) {
+			if (a.getSiteArea().toUpperCase().equals(anArea.getSiteArea().toUpperCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 
 }

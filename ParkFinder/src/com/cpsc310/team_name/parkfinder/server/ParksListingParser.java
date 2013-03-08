@@ -14,9 +14,6 @@ import org.xml.sax.InputSource;
 import com.cpsc310.team_name.parkfinder.client.Facility;
 import com.cpsc310.team_name.parkfinder.client.Park;
 
-//import com.cpsc310.team_name.parkfinder.client.LatLong;
-
-
 public class ParksListingParser {
 
 	// URL of data: ftp://webftp.vancouver.ca/opendata/xml/parks_facilities.xml
@@ -102,8 +99,7 @@ public class ParksListingParser {
 				try {
 					tempStreetNumber.append(parkContents.getElementsByTagName("StreetNumber").item(0).getFirstChild().getNodeValue());			
 				} catch (Exception e) {
-					System.out.println("Street Number Does not Exist For This Park:" + tempParkID.toString());
-					tempStreetNumber.append("N/A");
+					tempStreetNumber.append("N/A ");
 				}
 				
 				// get the name of the street
@@ -124,6 +120,7 @@ public class ParksListingParser {
 				// initialize the accumulators
 				StringBuffer tempFacilityType = new StringBuffer();
 				StringBuffer tempFacilityCount1 = new StringBuffer();
+				StringBuffer tempFacilityID = new StringBuffer();
 
 				try {
 					// iterate over the facilityNodeList, collecting data on each type of facility for this individual park
@@ -133,16 +130,21 @@ public class ParksListingParser {
 						// reset the accumulators
 						tempFacilityType.setLength(0);
 						tempFacilityCount1.setLength(0);
+						tempFacilityID.setLength(0);
 	
 						Element facilityContents = (Element) facilityNodeList.item(j); // facilityContents is an individual facility node's contents
 						// get the facility type
 						tempFacilityType.append(facilityContents.getElementsByTagName("FacilityType").item(0).getFirstChild().getNodeValue());
 						// get the facility count
 						tempFacilityCount1.append(facilityContents.getElementsByTagName("FacilityCount").item(0).getFirstChild().getNodeValue());
-								
+						
+						// assign a new facility id in the format: parkId_j
+						// example the third facility for a park with an id of 20 will have a facility id 20_2
+						tempFacilityID.append(tempParkID + "_" + j);
+			
 						// create a new Facility instance and add it to parkFacilities
 						int tempFacilityCountAsInt = Integer.parseInt(tempFacilityCount1.toString());
-						Facility f = new Facility(tempParkID.toString(), tempFacilityType.toString(), tempFacilityCountAsInt);
+						Facility f = new Facility(tempParkID.toString(), tempFacilityType.toString(), tempFacilityCountAsInt, tempFacilityID.toString());
 						parkFacilities.add(f);
 					}
 					
@@ -163,13 +165,6 @@ public class ParksListingParser {
 				//add p to initialParks
 				tempInitialParks.add(p);
 				
-				//FOR TESTING:
-//				System.out.println("Park ID: " + tempParkID.toString());
-//				for (Facility f: parkFacilities) {
-//					System.out.println(f.getFacilityType());
-//					System.out.println(f.getFacilityCount());
-//				}
-
 			}
 
 		} catch (Exception e) {

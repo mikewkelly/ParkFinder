@@ -5,7 +5,9 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Area implements Serializable {
 	
+	private String areaId; // a value unique to each Area object
 	private String parkId;
+	private String parkName;
 	private String siteArea;
 	private String closureNotes;
 	private String weekendStatus;
@@ -15,13 +17,18 @@ public class Area implements Serializable {
 		
 	}
 	
-	public Area(String theParkId, String anArea) {
+	public Area(String theParkId, String anArea, String anAreaId) {
 		parkId = theParkId;
 		siteArea = anArea;
+		areaId = anAreaId;
 	}
 	
 	public String getParkId() {
 		return parkId;
+	}
+	
+	public String getParkName() {
+		return parkName;
 	}
 	
 	public String getSiteArea() {
@@ -38,6 +45,10 @@ public class Area implements Serializable {
 	
 	public String getLastUpdated() {
 		return lastUpdated;
+	}
+	
+	public void setParkName(String theName) {
+		parkName = theName;
 	}
 	
 	public void setClosureNotes(String theNotes) {
