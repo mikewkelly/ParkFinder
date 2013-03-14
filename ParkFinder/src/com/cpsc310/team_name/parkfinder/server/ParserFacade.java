@@ -10,35 +10,47 @@ public class ParserFacade {
 	
 	private ParksListingParser plParser;
 	private WeekendPlayfieldStatusParser wpfsParser;
+	private ArrayList<Facility> initialFacility;
 	private ArrayList<Park> initialParks;
-	private ArrayList<Park> updatedParks;
+	private ArrayList<Area> initialAreas;
+	//private ArrayList<Park> updatedParks;
 	
 	public ParserFacade() {
 		
 	}
+	
 	/**Called to generate an ArrayList of complete Park objects based upon
 	 * data collected from CoV databases
 	 * 
 	 * @return ArrayList of Park objects
 	 */
-	public ArrayList<Park> parse() {
-		// Create a new PL parser to get an ArrayList of Park objects, 
-		// based upon CoV Park Listing data
+	public ArrayList<Park> getPark() {
+		
 		plParser = new ParksListingParser();
-		initialParks = plParser.parse();
-		
-		// Create a new WPFS Parser with initial park data to get an updated 
-		// ArrayList of Park objects, which includes data concerning ParkAreas
-		wpfsParser = new WeekendPlayfieldStatusParser(initialParks);
-		updatedParks = wpfsParser.parse();
-		
-		// For testing:
-	//	testByDisplay(updatedParks);
-		
-		return updatedParks;
+		initialParks = plParser.getPark();
+		//total number of parks
+		System.out.println("Total input parks:"+initialParks.size());
+		return initialParks;
+	}
+	public ArrayList<Facility> getFacility()
+	{	
+		plParser = new ParksListingParser();
+		initialFacility = plParser.getFacility();
+		//for test, display total number of facility
+		System.out.println("Total input facilities:"+initialFacility.size());
+		return initialFacility;
 	}
 	
-	public void testByDisplay(ArrayList<Park> theParks) {
+	public ArrayList<Area> getArea() {
+		wpfsParser = new WeekendPlayfieldStatusParser();
+		initialAreas = wpfsParser.parse();
+		//total number of areas
+		System.out.println("Total input areas:"+initialAreas.size());
+		return initialAreas;
+	}
+	
+	
+	/*public void testByDisplay(ArrayList<Park> theParks) {
 		System.out.println("There are " + theParks.size() + " individual Parks");
 		for (Park p: theParks) {
 			System.out.println("****************NEW PARK*************");
@@ -81,6 +93,6 @@ public class ParserFacade {
 			System.out.println();
 			
 		}
-	}
+	}*/
 }
 

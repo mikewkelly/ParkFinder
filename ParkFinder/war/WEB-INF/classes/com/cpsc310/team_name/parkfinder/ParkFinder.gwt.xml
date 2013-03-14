@@ -19,7 +19,8 @@
 
   <!-- Other module inherits                                      -->
   <inherits name="com.google.gwt.xml.XML" />
-
+  <inherits name='com.google.gwt.maps.GoogleMaps' />
+  
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.cpsc310.team_name.parkfinder.client.ParkFinder'/>
 

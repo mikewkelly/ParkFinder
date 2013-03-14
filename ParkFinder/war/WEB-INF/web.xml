@@ -17,7 +17,25 @@
     <url-pattern>/parkfinder/parkservice</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>facilityService</servlet-name>
+    <servlet-class>com.cpsc310.team_name.parkfinder.server.FacilityServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>facilityService</servlet-name>
+    <url-pattern>/parkfinder/facilityservice</url-pattern>
+  </servlet-mapping>
  
+ <servlet>
+    <servlet-name>areaService</servlet-name>
+    <servlet-class>com.cpsc310.team_name.parkfinder.server.AreaServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>areaService</servlet-name>
+    <url-pattern>/parkfinder/areaservice</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>SystemServiceServlet</servlet-name>

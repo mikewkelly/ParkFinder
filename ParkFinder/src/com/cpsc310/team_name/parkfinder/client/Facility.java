@@ -2,36 +2,50 @@ package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
 
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
 @SuppressWarnings("serial")
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Facility implements Serializable{
 	
-	private String facilityId; //a unique value assigned to each Facility instance
-	private String parkId;
-	private String facilityType;
-	private int facilityCount;
+	@PrimaryKey
+	private String facilityId;
+	@Persistent
+	private Long parkId;
+	@Persistent
+	private String facility;
 	
 	public Facility(){
 		// default constructor
 	}
 
 
-	public Facility(String aParkId, String aFacilityType, int aFacilityCount, String aFacilityId) {
+	public Facility(Long aParkId, String aFacilityType, String aFacilityId) {
 		parkId = aParkId;
-		facilityType = aFacilityType;
-		facilityCount = aFacilityCount;
+		facility = aFacilityType;
 		facilityId = aFacilityId;
 	}
-	
-	public String getParkId() {
+
+	public Long getParkId() {
 		return parkId;
 	}
 	
-	public String getFacilityType() {
-		return facilityType;
+	public String getFacility() {
+		return facility;
+	}
+	public String getFacilityID(){
+		return facilityId;
 	}
 	
-	public int getFacilityCount() {
-		return facilityCount;
+	public void setParkId(Long id)
+	{
+		parkId = id;
 	}
-
+	public void setFacility(String facilityToAdd)
+	{
+		facility = facilityToAdd;
+	}
 }

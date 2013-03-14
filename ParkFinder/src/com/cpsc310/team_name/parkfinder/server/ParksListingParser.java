@@ -20,16 +20,22 @@ public class ParksListingParser {
 	// URL of data (workaround): http://www.ugrad.cs.ubc.ca/~p8h8/parks_facilities.xml
 	
 	private ArrayList<Park> initialParks = new ArrayList<Park>();
-
+	private ArrayList<Facility> initialFacility = new ArrayList<Facility>();
+	
 	public ParksListingParser() {
 
 	}
-
-	public ArrayList<Park> parse() {
-		initialParks = parseXML();
+	// call parse XML file and get the parks
+	public ArrayList<Park> getPark() {
+		parseXML();
 		return initialParks;
 	}
-
+	//call parse XML file and get facilities
+	public ArrayList<Facility> getFacility(){
+		parseXML();
+		return initialFacility;
+	}
+	
 	/**
 	 * Called to parse a remote XML file and create individual Park instances with
 	 * the data
@@ -37,7 +43,7 @@ public class ParksListingParser {
 	 * @param file The XML file to be parsed
 	 *            
 	 */
-	private ArrayList<Park> parseXML() {
+	private void parseXML() {
 
 		ArrayList<Park> tempInitialParks = new ArrayList<Park>();
 
@@ -82,13 +88,10 @@ public class ParksListingParser {
 				tempFacilities.setLength(0);
 				tempFacilityCount.setLength(0);
 
-				// create an ArrayList to hold the facilities for the park
-				ArrayList<Facility> parkFacilities = new ArrayList<Facility>();
-				parkFacilities.clear();
 
 				//Get the ID of the park node
 				Node parkNode = parkNodeList.item(i);
-				tempParkID.append(((Element) parkNode).getAttribute("ID"));
+				String parkID = tempParkID.append(((Element) parkNode).getAttribute("ID")).toString();
 				Element parkContents = (Element) parkNodeList.item(i); // parkContents is an individual park node's contents
 
 				// get the name of the park
@@ -110,13 +113,10 @@ public class ParksListingParser {
 
 				// get the neighbourhood name
 				tempNeighbourhoodName.append(parkContents.getElementsByTagName("NeighbourhoodName").item(0).getFirstChild().getNodeValue());
-
-				// get the facilities data - NOTE: Parks may have 0..n facility type and 1..n facility count of each facility type
-
+				
 				// Get a Node list of all the facilities for this individual park
 				NodeList facilityNodeList = parkContents.getElementsByTagName("Facility");
 				int facilityTypeCount = facilityNodeList.getLength();
-				
 				// initialize the accumulators
 				StringBuffer tempFacilityType = new StringBuffer();
 				StringBuffer tempFacilityCount1 = new StringBuffer();
@@ -124,46 +124,42 @@ public class ParksListingParser {
 
 				try {
 					// iterate over the facilityNodeList, collecting data on each type of facility for this individual park
-					
+
 					for (int j = 0; j < facilityTypeCount; j++) {
-	
+
 						// reset the accumulators
 						tempFacilityType.setLength(0);
 						tempFacilityCount1.setLength(0);
 						tempFacilityID.setLength(0);
-	
+
 						Element facilityContents = (Element) facilityNodeList.item(j); // facilityContents is an individual facility node's contents
 						// get the facility type
-						tempFacilityType.append(facilityContents.getElementsByTagName("FacilityType").item(0).getFirstChild().getNodeValue());
-						// get the facility count
-						tempFacilityCount1.append(facilityContents.getElementsByTagName("FacilityCount").item(0).getFirstChild().getNodeValue());
-						
-						// assign a new facility id in the format: parkId_j
-						// example the third facility for a park with an id of 20 will have a facility id 20_2
-						tempFacilityID.append(tempParkID + "_" + j);
-			
+						String type = tempFacilityType.append(facilityContents.getElementsByTagName("FacilityType").item(0).getFirstChild().getNodeValue()).toString();
+						String count =tempFacilityCount1.append(facilityContents.getElementsByTagName("FacilityCount").item(0).getFirstChild().getNodeValue()).toString();
+						String Nfacility = type + " X "+count;
+						// assign a new facility id in the format: parkId_type
+						// example the baseball diamond  facility for a park with an id of 20 will have a facility id 20_baseballdiamond
+						String FacilityID = parkID + "_" + type;
+
 						// create a new Facility instance and add it to parkFacilities
-						int tempFacilityCountAsInt = Integer.parseInt(tempFacilityCount1.toString());
-						Facility f = new Facility(tempParkID.toString(), tempFacilityType.toString(), tempFacilityCountAsInt, tempFacilityID.toString());
-						parkFacilities.add(f);
+						Facility f = new Facility(Long.parseLong(tempParkID.toString()), Nfacility, FacilityID);
+						initialFacility.add(f);
 					}
-					
+
 				} catch (Exception e) {
-					parkFacilities.clear(); // for Parks with no facilities
 				}
-						
+			
 				// Construct a new Park instance using collected data and add it to initialParks
 
-				Park p = new Park(tempParkID.toString());
+				Park p = new Park(Long.parseLong(tempParkID.toString()));
 				p.setName(tempParkName.toString());
 				p.setStreetName(tempStreetName.toString());
 				p.setStreetNumber(tempStreetNumber.toString());
 				p.setGoogleMapDest(tempGoogleMapDest.toString());
 				p.setNeighbourhoodName(tempNeighbourhoodName.toString());
-				p.setParkFacilities(parkFacilities);
 
 				//add p to initialParks
-				tempInitialParks.add(p);
+				initialParks.add(p);
 				
 			}
 
@@ -171,21 +167,6 @@ public class ParksListingParser {
 			System.out.println("Could not parse XML document: "+e.getMessage());
 		} 
 
-		return tempInitialParks;	
 	}
-
-	/**
-	 * Called to convert a single-string googleMapDest to a LatLong object
-	 * 
-	 * @param 
-	 *            
-	 */
-	/*private LatLong convertGMDtoLatLong(String googleMapDest) {
-		String[] theLatAndTheLong = googleMapDest.split(",");
-		String theLat = theLatAndTheLong[0];
-		String theLong = theLatAndTheLong[1];
-		LatLong theLatLong = new LatLong(Float.parseFloat(theLat), Float.parseFloat(theLong)); 
-		return theLatLong;
-		}*/
 
 	}

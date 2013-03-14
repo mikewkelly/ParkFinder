@@ -5,29 +5,27 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class LatLong implements Serializable {
 	
-	private float longitude;
-	private float latitude;
+	private double longitude;
+	private double latitude;
 	
 
 	public LatLong() {
-		super();
-
 	}
 	
-	public float getLat() {
-		return this.latitude;
-	}
-	
-	public float getLong() {
-		return this.longitude;
-	}
-
-	public void setLat(float lat){
-		this.latitude=lat;
-	}
-	public void setLong(float lon){
+	public LatLong(Double lat, Double lon) {
+		this.latitude = lat;
 		this.longitude = lon;
+
 	}
+	
+	public double getLat() {
+		return latitude;
+	}
+	
+	public double getLong() {
+		return longitude;
+	}
+	
 }
 
 
