@@ -9,8 +9,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.control.LargeMapControl;
+import com.google.gwt.maps.client.event.MarkerClickHandler;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
+import com.google.gwt.maps.client.overlay.MarkerOptions;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -71,28 +73,6 @@ public class ParkFinder implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-
-		// FOR TESTING
-		final ArrayList<Park> parks = new ArrayList<Park>();
-		Park p1 = new Park((long) 1);
-		p1.setName("Arbutus Village Park");
-		p1.setGoogleMapDest("49.249783,-123.155250");
-		parks.add(p1);
-
-		Park p2 = new Park((long) 2);
-		p2.setName("Carnarvon Park");
-		p2.setGoogleMapDest("49.256555,-123.171406");
-		parks.add(p2);
-
-		Park p3 = new Park((long) 3);
-		p3.setName("Prince of Wales Park");
-		p3.setGoogleMapDest("49.244397,-123.156429");
-		parks.add(p3);
-
-		Park p4 = new Park((long) 4);
-		p4.setName("Park Site on Puget Drive");
-		p4.setGoogleMapDest("49.247723,-123.168194");
-		parks.add(p4);
 
 		loadParkTable();
 
@@ -320,6 +300,7 @@ public class ParkFinder implements EntryPoint {
 		final MapWidget map = new MapWidget(teaSwampPark, 12);
 
 		map.setSize("100%", "100%");
+		map.setGoogleBarEnabled(false);
 
 		// Add some controls for the zoom level
 		map.addControl(new LargeMapControl());
@@ -342,9 +323,14 @@ public class ParkFinder implements EntryPoint {
 
 		for (Park p : parks) {
 			LatLong theLatLong = convertGMDtoLatLong(p.getGoogleMapDest());
-			LatLng l = LatLng.newInstance(theLatLong.getLat(),
+			LatLng locationPoint = LatLng.newInstance(theLatLong.getLat(),
 					theLatLong.getLong());
-			theMap.addOverlay(new Marker(l));
+			
+			// define options for the marker
+			MarkerOptions markerOptions = MarkerOptions.newInstance();
+			markerOptions.setClickable(true);
+			Marker theMarker = new Marker(locationPoint, markerOptions);
+			theMap.addOverlay(theMarker);
 		}
 
 		// Set up the flextable showing the park names
