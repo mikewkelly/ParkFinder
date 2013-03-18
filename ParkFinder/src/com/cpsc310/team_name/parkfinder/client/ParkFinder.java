@@ -44,6 +44,7 @@ public class ParkFinder implements EntryPoint {
 	private TextBox searchCriteriaTextBox = new TextBox();
 	private Button displayAllButton = new Button("Display All");
 	private Button displayAllInMapButton = new Button("Display Parks in Map");
+	private Button clearMapButton = new Button("Clear Map");
 	private Button searchButton = new Button("Search");
 	private Label lastUpdateLabel = new Label();
 	private Label errorMessage = new Label();
@@ -111,6 +112,7 @@ public class ParkFinder implements EntryPoint {
 		searchPanelContents.add(displayAllButton);
 		searchPanelContents.add(importDataButton);
 		searchPanelContents.add(displayAllInMapButton);
+		searchPanelContents.add(clearMapButton);
 		searchPanelContents.addStyleName("inputTextBox");
 		searchPanel.add(searchPanelContents);
 
@@ -143,6 +145,13 @@ public class ParkFinder implements EntryPoint {
 		displayAllInMapButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				displayAllInMap();
+			}
+		});
+		
+		clearMapButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				theMap.clearOverlays();
+			//	mapParkList.clear();
 			}
 		});
 
