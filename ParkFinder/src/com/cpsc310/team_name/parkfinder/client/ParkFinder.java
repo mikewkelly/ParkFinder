@@ -353,6 +353,7 @@ public class ParkFinder implements EntryPoint {
 		tlp.add(parkMapDock, "Map View");
 
 		tlp.add(tablePanel, "Detailed View");
+		
 
 	}
 
