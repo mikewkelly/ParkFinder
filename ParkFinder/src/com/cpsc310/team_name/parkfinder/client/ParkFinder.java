@@ -1,33 +1,52 @@
 package com.cpsc310.team_name.parkfinder.client;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.maps.client.InfoWindowContent;
+import com.google.gwt.maps.client.MapType;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.control.LargeMapControl;
+import com.google.gwt.maps.client.control.MapTypeControl;
+import com.google.gwt.maps.client.control.MenuMapTypeControl;
 import com.google.gwt.maps.client.event.MarkerClickHandler;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.MarkerOptions;
+import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.core.java.util.Arrays;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class ParkFinder implements EntryPoint {
+	
+	int INITIAL_ZOOM_LEVEL = 12;
 
 	// the main panel
 	DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
@@ -55,8 +74,11 @@ public class ParkFinder implements EntryPoint {
 	private VerticalPanel tablePanel = new VerticalPanel();
 
 	// for the map
-	FlexTable mapParkList = new FlexTable();
+	CellList<String> mapParkList;
+	ListDataProvider<String> dataProvider;
+	ScrollPanel mapParkListScrollPanel;
 	MapWidget theMap;
+
 
 	// the string list to store the primary keys
 	private ArrayList<String> parklist = new ArrayList<String>();
@@ -150,8 +172,7 @@ public class ParkFinder implements EntryPoint {
 		
 		clearMapButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				theMap.clearOverlays();
-			//	mapParkList.clear();
+				clearMapAndList();
 			}
 		});
 
@@ -303,13 +324,17 @@ public class ParkFinder implements EntryPoint {
 
 	// The following methods have to do with the Map
 
+	@SuppressWarnings("unchecked")
 	private void buildMap() {
 
 		LatLng teaSwampPark = LatLng.newInstance(49.257091, -123.098595);
-		final MapWidget map = new MapWidget(teaSwampPark, 12);
+		final MapWidget map = new MapWidget(teaSwampPark, INITIAL_ZOOM_LEVEL);
 
 		map.setSize("100%", "100%");
 		map.setGoogleBarEnabled(false);
+		map.setScrollWheelZoomEnabled(true);
+		map.addControl(new MapTypeControl());
+		map.setCurrentMapType(MapType.getNormalMap());
 
 		// Add some controls for the zoom level
 		map.addControl(new LargeMapControl());
@@ -318,39 +343,119 @@ public class ParkFinder implements EntryPoint {
 
 		final DockLayoutPanel parkMapDock = new DockLayoutPanel(Unit.PCT);
 		parkMapDock.addEast(theMap, 80);
-		parkMapDock.addWest(mapParkList, 20);
+		
+		mapParkList = new CellList<String>(new TextCell());
+		dataProvider = new ListDataProvider<String>();
+	    dataProvider.addDataDisplay(mapParkList);
+	    mapParkListScrollPanel = new ScrollPanel(mapParkList);
 
-		// add the DockLayoutPanel to the TabLayoutPanel
+		parkMapDock.addWest(mapParkListScrollPanel, 20);
 		tlp.add(parkMapDock, "Map View");
 
-		// add the table to the tlp
 		tlp.add(tablePanel, "Detailed View");
 
 	}
 
 	private void updateMap(Park[] parks) {
-
+		
+		// How to handle the user's selection of a specific park in the list next to the map
+		final Park[] parksFinalCopy = parks;
+		final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
+		    mapParkList.setSelectionModel(selectionModel);
+		    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+		      public void onSelectionChange(SelectionChangeEvent event) {
+		        String selected = selectionModel.getSelectedObject();
+		        if (selected != null) {
+		        	for (Park p: parksFinalCopy) {
+		        		if (p.getName().toUpperCase().equals(selected.toUpperCase())) {
+		        			
+		        			String streetNumber = p.getStreetNumber();
+		        			String streetName = p.getStreetName();
+		        			String neighbourhoodName = p.getNeighbourhoodName();
+		        			String space = " ";
+		        			String address;
+		        			if (streetNumber.contains("N/A")) {
+		        				address = streetName;
+		        			} else {
+		        				streetNumber = streetNumber.concat(space);
+		        				address = streetNumber.concat(streetName);
+		        			}
+		        			
+		        			LatLong theLatLong = convertGMDtoLatLong(p.getGoogleMapDest());
+		        			LatLng locationPoint = LatLng.newInstance(theLatLong.getLat(), theLatLong.getLong());
+		        			theMap.setCenter(locationPoint);
+		        			
+		        			VerticalPanel infoVerticalPanel = new VerticalPanel();
+		        			FlexTable parkInfoFlexTable = new FlexTable();
+		        			parkInfoFlexTable.setText(0, 0, selected);
+		        			parkInfoFlexTable.setText(1, 0, address);
+		        			parkInfoFlexTable.setText(2, 0, neighbourhoodName);
+		        			
+		        			infoVerticalPanel.add(parkInfoFlexTable);
+		        			theMap.getInfoWindow().open(theMap.getCenter(), new InfoWindowContent(infoVerticalPanel));
+		        		}
+		        	}
+		        }
+		      }
+		    });
+		    
+		clearMapAndList();
+		List<String> currentMapParkList = dataProvider.getList();
+		mapParkList.setVisibleRange(0, parks.length);
 		for (Park p : parks) {
 			LatLong theLatLong = convertGMDtoLatLong(p.getGoogleMapDest());
-			LatLng locationPoint = LatLng.newInstance(theLatLong.getLat(),
+			final LatLng locationPoint = LatLng.newInstance(theLatLong.getLat(),
 					theLatLong.getLong());
+			final String parkName = p.getName();
+			final String neighbourhoodName = p.getNeighbourhoodName();
+			final String streetNumber = p.getStreetNumber();
+			final String streetName = p.getStreetName();
+			
+			currentMapParkList.add(parkName);
 			
 			// define options for the marker
 			MarkerOptions markerOptions = MarkerOptions.newInstance();
 			markerOptions.setClickable(true);
 			Marker theMarker = new Marker(locationPoint, markerOptions);
+			
+			// handle click events for the marker
+			theMarker.addMarkerClickHandler(new MarkerClickHandler() {
+                @Override
+                public void onClick(MarkerClickEvent event) {
+                	theMap.getInfoWindow().close();
+                	String space = " ";
+        			String address;
+        			if (streetNumber.contains("N/A")) {
+        				address = streetName;
+        			} else {
+        				String streetNumber2 = streetNumber.concat(space);
+        				address = streetNumber2.concat(streetName);
+        			}
+                	
+        			VerticalPanel infoVerticalPanel = new VerticalPanel();
+        			FlexTable parkInfoFlexTable = new FlexTable();
+        			parkInfoFlexTable.setText(0, 0, parkName);
+        			parkInfoFlexTable.setText(1, 0, address);
+        			parkInfoFlexTable.setText(2, 0, neighbourhoodName);
+        			
+        			infoVerticalPanel.add(parkInfoFlexTable);
+        			theMap.getInfoWindow().open(locationPoint, new InfoWindowContent(infoVerticalPanel));
+        			
+        			//selected the park name in the list associated with the clicked marker
+        			@SuppressWarnings("unchecked")
+					SingleSelectionModel<String> selectionModel = (SingleSelectionModel<String>) mapParkList.getSelectionModel();
+        			selectionModel.setSelected(parkName, true);
+        
+                }
+
+        });
+			
+			
 			theMap.addOverlay(theMarker);
 		}
 
-		// Set up the flextable showing the park names
-		mapParkList.setText(0, 0, "Park Name:");
-
-		// add each park to the mapParkList
-		for (Park p : parks) {
-			showParkInMapList(p);
-		}
-
 	}
+
 
 	private void displayAllInMap() {
 		successMsg.setText("Getting data from server...");
@@ -371,13 +476,10 @@ public class ParkFinder implements EntryPoint {
 		});
 
 	}
-
-	private void showParkInMapList(Park park) {
-
-		int row = mapParkList.getRowCount();
-
-		mapParkList.setText(row, 0, park.getName());
-
+	
+	private void clearMapAndList() {
+		theMap.clearOverlays();
+		mapParkList.setVisibleRangeAndClearData(new Range(0, 0), true);
 	}
 
 	private LatLong convertGMDtoLatLong(String googleMapDest) {
