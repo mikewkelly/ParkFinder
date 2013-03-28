@@ -76,6 +76,7 @@ public class WeekendPlayfieldStatusParser {
 		for (int i = 0; i < parkCount; i++ ) {
 			// clear the accumulators
 			//tempAreaID.setLength(0);
+			tempAreaID.setLength(0);
 			tempParkID.setLength(0);
 			tempParkName.setLength(0);
 			tempSiteArea.setLength(0);
@@ -114,10 +115,9 @@ public class WeekendPlayfieldStatusParser {
 			// will have an areaId of 2_65
 			
 			String areaID = String.valueOf(i) + "_"+ ID;
-			System.out.println(areaID);
 			// Construct a new Area instance using accumulator values
 			
-			Area a = new Area(Long.parseLong(ID), areaID,tempSiteArea.toString());
+			Area a = new Area(ID, areaID,tempSiteArea.toString());
 			a.setParkName(tempParkName.toString());
 			a.setClosureNotes(tempClosureNotes.toString());
 			a.setWeekendStatus(tempWeekendStatus.toString());

@@ -4,10 +4,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("areaservice")
 public interface AreaService extends RemoteService{
-	
 
-	public void addArea(Long parkId);
-	public Area[] getArea();
-	public void removeArea(Long parkId);
+	public void addArea(String parkId);
+	public Area[] getArea(String parkID);
+	public void removeArea(String parkId);
 	public void importArea();
 }

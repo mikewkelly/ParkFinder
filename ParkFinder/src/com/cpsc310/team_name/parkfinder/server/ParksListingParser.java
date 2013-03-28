@@ -21,6 +21,7 @@ public class ParksListingParser {
 	
 	private ArrayList<Park> initialParks = new ArrayList<Park>();
 	private ArrayList<Facility> initialFacility = new ArrayList<Facility>();
+	private ArrayList<String> facilities = new ArrayList<String>();
 	
 	public ParksListingParser() {
 
@@ -136,13 +137,13 @@ public class ParksListingParser {
 						// get the facility type
 						String type = tempFacilityType.append(facilityContents.getElementsByTagName("FacilityType").item(0).getFirstChild().getNodeValue()).toString();
 						String count =tempFacilityCount1.append(facilityContents.getElementsByTagName("FacilityCount").item(0).getFirstChild().getNodeValue()).toString();
-						String Nfacility = type + " X "+count;
 						// assign a new facility id in the format: parkId_type
 						// example the baseball diamond  facility for a park with an id of 20 will have a facility id 20_baseballdiamond
 						String FacilityID = parkID + "_" + type;
-
+						
 						// create a new Facility instance and add it to parkFacilities
-						Facility f = new Facility(Long.parseLong(tempParkID.toString()), Nfacility, FacilityID);
+						//TODO make type with count
+						Facility f = new Facility(tempParkID.toString(), type, FacilityID, count);
 						initialFacility.add(f);
 					}
 
@@ -151,7 +152,7 @@ public class ParksListingParser {
 			
 				// Construct a new Park instance using collected data and add it to initialParks
 
-				Park p = new Park(Long.parseLong(tempParkID.toString()));
+				Park p = new Park(tempParkID.toString());
 				p.setName(tempParkName.toString());
 				p.setStreetName(tempStreetName.toString());
 				p.setStreetNumber(tempStreetNumber.toString());
@@ -162,6 +163,7 @@ public class ParksListingParser {
 				initialParks.add(p);
 				
 			}
+			
 
 		} catch (Exception e) {
 			System.out.println("Could not parse XML document: "+e.getMessage());

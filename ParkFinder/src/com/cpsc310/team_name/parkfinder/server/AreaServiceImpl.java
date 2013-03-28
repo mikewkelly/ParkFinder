@@ -20,21 +20,25 @@ public class AreaServiceImpl extends RemoteServiceServlet implements
 	private static final Logger LOG = Logger.getLogger(ParkServiceImpl.class.getName());
 	private static final PersistenceManagerFactory PMF =
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
-	@Override
-	public void addArea(Long parkId) {
+	
+	public void addArea(String parkId) {
 		//TODO
 	}
 	
 
-	@Override
-	public Area[] getArea() {
+	
+	public Area[] getArea(String parkID) {
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Area> theArea =  new ArrayList<Area>();
+		
+		Query q = pm.newQuery(Area.class);
+		q.setFilter("parkId==parkIdParam");
+		q.setOrdering("parkId");
+		q.declareParameters("String parkIdParam");
 		try
 		{
-			Query q = pm.newQuery(Area.class);
-			q.setOrdering("parkId");
-			List<Area> area = (List<Area>) q.execute();
+			
+			List<Area> area = (List<Area>) q.execute(parkID);
 			for (Area a:area)
 			{
 				theArea.add(a);
@@ -48,8 +52,8 @@ public class AreaServiceImpl extends RemoteServiceServlet implements
 		return theArea.toArray(new Area[theArea.size()]);
 	}
 
-	@Override
-	public void removeArea(Long parkId) {
+	
+	public void removeArea(String parkId) {
 		// TODO Auto-generated method stub
 
 	}
@@ -63,7 +67,7 @@ public class AreaServiceImpl extends RemoteServiceServlet implements
 		try {			
 			pm.makePersistentAll(theArea);
 		} finally {
-			pm.close();
+			//TODO
 		}
 
 	}

@@ -23,14 +23,14 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 	
 	@Override
-	public void addPark(Long parkId) {
+	public void addPark(String parkId) {
 		PersistenceManager pm = getPersistenceManager();
 		try{
 			pm.makePersistent(new Park(parkId));
 		}
 		finally{
-			pm.close();
-		}
+				//TODO
+			}
 	}
 
 	private PersistenceManager getPersistenceManager() {
@@ -38,28 +38,28 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	}
 
 	@Override
-	public Park[] getParks() {
+	public Park[] getParks(ArrayList<String> idPara) {
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Park> park = new ArrayList<Park>();
-
 		try{
-			Query q = pm.newQuery(Park.class);
-			q.setOrdering("name");
-			List<Park> parks = (List<Park>) q.execute();
-			for (Park p:parks){
-				park.add(p);
+			for(String str:idPara)
+			{	
+			
+		        Park p = pm.getObjectById(Park.class, str);
+		        park.add(p);
+			
 			}
-			/*aPark.setName("test_name_updated");
-			JDOHelper.makeDirty(aPark, aPark.getName());*/
-		}finally{
+		}
+		finally{
 			pm.close();
 		}
+		
 		return park.toArray(new Park[park.size()]);
 		
 	}
 
 	@Override
-	public void removePark(Long parkId) {
+	public void removePark(String parkId) {
 		PersistenceManager pm = getPersistenceManager();
 		try{
 			long deleteCount = 0;
@@ -87,8 +87,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 		try {			
 			pm.makePersistentAll(parks);
 		} finally {
-			pm.close();
-		}
+			pm.close();		}
 	}
 	
 	/*public Park testParks(String id, String name,

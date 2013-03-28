@@ -4,11 +4,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("facilityservice")
 public interface FacilityService extends RemoteService{
-	
 
 	public void addFacility(Long parkId);
-	public Facility[] getFacility();
+	public Facility[] getFacility(String facilityType);
 	public void removeFacility(Long parkId);
 	public void importFacility();
+	public Facility[] getFacilitybyPark(String parkId);
 }
 

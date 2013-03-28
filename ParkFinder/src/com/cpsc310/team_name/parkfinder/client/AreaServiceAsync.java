@@ -4,12 +4,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface AreaServiceAsync {
 
-	void addArea(Long parkId, AsyncCallback<Void> callback);
+	void addArea(String parkId, AsyncCallback<Void> callback);
 
-	void getArea(AsyncCallback<Area[]> callback);
+	void getArea(String parkId,AsyncCallback<Area[]> callback);
 
 	void importArea(AsyncCallback<Void> callback);
 
-	void removeArea(Long parkId, AsyncCallback<Void> callback);
+	void removeArea(String parkId, AsyncCallback<Void> callback);
 
 }

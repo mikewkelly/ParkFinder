@@ -11,11 +11,10 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Area implements Serializable {
 	
-	
 	@PrimaryKey
 	private String areaId; // a value unique to each Area object
 	@Persistent
-	private Long parkId;
+	private String parkId;
 	@Persistent
 	private String parkName;
 	@Persistent
@@ -33,7 +32,7 @@ public class Area implements Serializable {
 		
 	}
 	
-	public Area(Long theParkId, String theAreaId,String anArea) {
+	public Area(String theParkId, String theAreaId,String anArea) {
 		parkId = theParkId;
 		siteArea = anArea;
 		areaId = theAreaId;
@@ -43,7 +42,7 @@ public class Area implements Serializable {
 	}
 	
 	
-	public Long getParkId() {
+	public String getParkId() {
 		return parkId;
 	}
 	

@@ -7,12 +7,13 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @SuppressWarnings("serial")
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+@PersistenceCapable(identityType = IdentityType.APPLICATION,detachable="true")
+
 public class Park implements Serializable{
 	
 
 	@PrimaryKey
-	private Long parkId;
+	private String parkId;
 	
 	@Persistent
 	private String name;
@@ -32,22 +33,20 @@ public class Park implements Serializable{
 	private String neighbourhoodName;
 	
 
-	/*@Persistent
-	private ArrayList<Facility> parkFacilities;
 	
-	@Persistent
+	/*@Persistent
 	private ArrayList<Area> parkAreas;
 */
 	public Park() {
 		// default constructor
 	}
 	
-	public Park(Long theParkId) {
+	public Park(String theParkId) {
 
 		parkId = theParkId;
 	}
 	
-	public Long getParkId() {
+	public String getParkId() {
 		return parkId;
 	}
 	
@@ -71,7 +70,6 @@ public class Park implements Serializable{
 		return neighbourhoodName;
 	}
 	
-	
 	public void setName(String theName) {
 		name = theName;
 	}
@@ -92,21 +90,17 @@ public class Park implements Serializable{
 		neighbourhoodName = theName;
 	}
 	
-	// These methods deal with the Facilities
+	/*// These methods deal with the Facilities
 	
-	/*public ArrayList<Facility> getParkFacilities() {
-		return parkFacilities;
+	public String getParkFacilities() {
+		return parkFacility;
 	}
 	
-	public void setParkFacilities(ArrayList<Facility> theFacilities) {
-		parkFacilities = theFacilities;
+	public void setParkFacilities(String theFacility) {
+		parkFacility = theFacility;
 	}
 	
-	public void addFacility(Facility theFacility) {
-		if (!this.containsFacilityByType(theFacility.getFacilityType())) {
-			parkFacilities.add(theFacility);
-		}
-	}
+	/*
 	
 	public Facility getFacilityByType(String theFacilityType) {
 		for (Facility f: parkFacilities) {

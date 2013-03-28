@@ -1,36 +1,46 @@
 package com.cpsc310.team_name.parkfinder.client;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import com.cpsc310.team_name.parkfinder.shared.FieldVerifier;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapType;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.control.MapTypeControl;
-import com.google.gwt.maps.client.control.MenuMapTypeControl;
 import com.google.gwt.maps.client.event.MarkerClickHandler;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.MarkerOptions;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.core.java.util.Arrays;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -38,7 +48,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
@@ -61,9 +70,9 @@ public class ParkFinder implements EntryPoint {
 	private VerticalPanel searchPanel = new VerticalPanel();
 	private HorizontalPanel searchPanelContents = new HorizontalPanel();
 	private TextBox searchCriteriaTextBox = new TextBox();
-	private Button displayAllButton = new Button("Display All");
-	private Button displayAllInMapButton = new Button("Display Parks in Map");
-	private Button clearMapButton = new Button("Clear Map");
+	/*Not necessary for users to show map separately
+	 * private Button displayAllInMapButton = new Button("Display Parks in Map");
+	private Button clearMapButton = new Button("Clear Map");*/
 	private Button searchButton = new Button("Search");
 	private Label lastUpdateLabel = new Label();
 	private Label errorMessage = new Label();
@@ -80,16 +89,15 @@ public class ParkFinder implements EntryPoint {
 	MapWidget theMap;
 
 
-	// the string list to store the primary keys
-	private ArrayList<String> parklist = new ArrayList<String>();
-	private ArrayList<String> facilitylist = new ArrayList<String>();
-	private ArrayList<String> arealist = new ArrayList<String>();
+	public String facilityToSearch=null;
 
-	private Button importDataButton = new Button("Import");
+	// the string list to store the primary keys
+	public ArrayList<String> parklist = new ArrayList<String>();
+	private ArrayList<String> facilitylist=new ArrayList<String>();
+	private ArrayList<String> typelist = new ArrayList<String>();
 	// the Async server objects
 	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
-	private final FacilityServiceAsync facilityService = GWT
-			.create(FacilityService.class);
+	private final FacilityServiceAsync facilityService = GWT.create(FacilityService.class);
 	private final AreaServiceAsync areaService = GWT.create(AreaService.class);
 
 	/**
@@ -131,12 +139,9 @@ public class ParkFinder implements EntryPoint {
 		// used for future implementation on searching
 		searchPanelContents.add(searchCriteriaTextBox);
 		searchPanelContents.add(searchButton);
-		searchPanelContents.add(displayAllButton);
-		searchPanelContents.add(importDataButton);
-		searchPanelContents.add(displayAllInMapButton);
-		searchPanelContents.add(clearMapButton);
+		/*searchPanelContents.add(displayAllInMapButton);
+		searchPanelContents.add(clearMapButton);*/
 		searchPanelContents.addStyleName("inputTextBox");
-		searchPanel.add(searchPanelContents);
 
 		searchButton.addStyleDependentName("search");
 		errorMessage.setStyleName("errorMessage");
@@ -144,6 +149,7 @@ public class ParkFinder implements EntryPoint {
 		errorMessage.setVisible(false);
 		successMsg.setVisible(false);
 
+		searchPanel.add(searchPanelContents);
 		searchPanel.add(errorMessage);
 		searchPanel.add(successMsg);
 
@@ -152,19 +158,17 @@ public class ParkFinder implements EntryPoint {
 
 		searchCriteriaTextBox.setFocus(true);
 
-		displayAllButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				displayAll();
-			}
-		});
+		importData();
 
-		importDataButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				importData();
-			}
-		});
+		
+		searchButton.addClickHandler(new ClickHandler(){
 
-		displayAllInMapButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+					Search();
+			}
+			
+		});
+	/*	displayAllInMapButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				displayAllInMap();
 			}
@@ -175,152 +179,252 @@ public class ParkFinder implements EntryPoint {
 				clearMapAndList();
 			}
 		});
-
+*/
 	}
 
 	private void importData() {
-		// import parks to GWT server
+		//import parks to GWT server
 		parkService.importParks(new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
 				errorMessage.setText("Error: failed to import data");
 				errorMessage.setVisible(true);
 			}
-
 			public void onSuccess(Void ignore) {
-				successMsg.setText("Data imported successfully");
-				successMsg.setVisible(true);
+				
 			}
 		});
-		// import facilities to GWT server
+		//import facilities to GWT server
 		facilityService.importFacility(new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
+				System.out.println("faclity fail");
+
 				errorMessage.setText("Error: failed to import data");
 				errorMessage.setVisible(true);
 			}
-
 			public void onSuccess(Void ignore) {
-				successMsg.setText("Data imported successfully");
-				successMsg.setVisible(true);
+				
+				
 			}
 		});
-		// import areas to GWT server
+		//import areas to GWT server
 		areaService.importArea(new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
+				System.out.println("area fail");
 				errorMessage.setText("Error: failed to import data");
 				errorMessage.setVisible(true);
 			}
-
 			public void onSuccess(Void ignore) {
-				successMsg.setText("Data imported successfully");
-				successMsg.setVisible(true);
+				
 			}
 		});
 	}
+	
+private void Search() {
+	
+		clearMapAndList();
 
-	private void displayAll() {
-		successMsg.setText("Getting data from server...");
-		successMsg.setVisible(true);
-
-		// TODO
-		// Here is what goes wrong. For some reason the parks don't have count
-		// at all and the others have
-		// most but not all of the data
-
-		// here is call get all parks
-		parkService.getParks(new AsyncCallback<Park[]>() {
+		refreshTable();
+		parklist.clear();
+		facilitylist.clear();
+		facilityToSearch = searchCriteriaTextBox.getText().trim();
+		searchCriteriaTextBox.setFocus(true);
+			
+		successMsg.setText("Getting " +facilityToSearch+ " from server...");
+    	successMsg.setVisible(true);
+    	
+    	System.out.println("facility "+facilityToSearch);
+	
+    	
+			facilityService.getFacility(facilityToSearch,new AsyncCallback<Facility[]>() {
+    	
 			public void onFailure(Throwable error) {
-				errorMessage
-						.setText("Error: failed to receive data from server");
+				errorMessage.setText("Error: failed to receive data from server");
 				errorMessage.setVisible(true);
 			}
+			
+		    public void onSuccess(Facility[] facilities) {
+		    	successMsg.setText("Getting data from server...");
+		    	successMsg.setVisible(true);
+		    	for(Facility f:facilities) {
+		    		if(!facilitylist.contains(f.getFacilityID())) {
+		    			facilitylist.add(f.getFacilityID());
+		    			if(!parklist.contains(f.getParkId()))
+		    			{
+		    				parklist.add(f.getParkId());
+		    			}
+		    		}
+	    		}
 
-			public void onSuccess(Park[] parks) {
-				successMsg.setText("Getting data from server...");
-				successMsg.setVisible(true);
-				int count = 0;
-				for (Park p : parks) {
-					if (!parklist.contains(p.getParkId())) {
-						parklist.add(String.valueOf(p.getParkId()));
-						// showParkInTable(p);
-						count++;
-						System.out.println(p.getParkId());
+		    	parkService.getParks(parklist, new AsyncCallback<Park[]>() {
+					public void onFailure(Throwable error) {
+						errorMessage.setText("Error: failed to receive data from server");
+						errorMessage.setVisible(true);
 					}
+				    public void onSuccess(Park[] parks) {
+				    	successMsg.setText("Getting data from server...");
+				    	successMsg.setVisible(true);
+				    	int row=1;
+				    	for(Park p:parks) {
+				    		
+				    		showParkInTable(p,row);
+				    		row++;				    		
+				  
+			    		}
+				    	if(!facilityToSearch.isEmpty())
+				    	successMsg.setText("Found parks with " + facilityToSearch+ " : " + parklist.size());
+				    	else
+				    	successMsg.setText("Display all parks in Vancouver");
+				    }
+				});
+				displayAllInMap();
 
-				}
-				System.out.println("parks: " + count);
-				successMsg.setText("Parks Displayed: " + parklist.size());
+		    	successMsg.setText("Facility Displayed: " + facilitylist.size());
 			}
+			
 		});
-		// get all facilities
-		facilityService.getFacility(new AsyncCallback<Facility[]>() {
-			public void onFailure(Throwable error) {
-				errorMessage
-						.setText("Error: failed to receive data from server");
-				errorMessage.setVisible(true);
-			}
-
-			public void onSuccess(Facility[] facilities) {
-				successMsg.setText("Getting data from server...");
-				int count = 0;
-				successMsg.setVisible(true);
-				for (Facility f : facilities) {
-					if (!facilitylist.contains(f.getFacilityID())) {
-						facilitylist.add(String.valueOf(f.getFacilityID()));
-						count++;
-						System.out.println(f.getFacilityID());
-					}
-				}
-				System.out.println("facilities: " + count);
-				successMsg.setText("Facility Displayed: " + facilitylist.size());
-			}
-		});
-		// get all areas
-		areaService.getArea(new AsyncCallback<Area[]>() {
-			public void onFailure(Throwable error) {
-				errorMessage
-						.setText("Error: failed to receive data from server");
-				errorMessage.setVisible(true);
-			}
-
-			public void onSuccess(Area[] areas) {
-				successMsg.setText("Getting data from server...");
-				int count = 0;
-				successMsg.setVisible(true);
-				for (Area a : areas) {
-					if (!arealist.contains(a.getAreaId())) {
-						arealist.add(String.valueOf(a.getAreaId()));
-						count++;
-						System.out.println(a.getAreaId());
-					}
-				}
-				System.out.println("areas: " + count);
-				successMsg.setText("Area Displayed: " + arealist.size());
-			}
-		});
-	}
-
-	private void showParkInTable(Park park) {
-
+}
+	private void refreshTable(){
 		int row = parkTable.getRowCount();
-		// String parkfacilities = "";
-		// for(Facility s:park.getParkFacilities().getFacilities()) {
-		// parkfacilities = parkfacilities + s.getFacilityType() + " ";
-		// }
-		// parkTable.setText(row, 0, park.getParkId());
+		for(int i=row-1;i>0;i--){
+			parkTable.removeRow(i);
+		}
+	}
+	
+
+private void showParkInTable(Park park,int row) {
+		
 		parkTable.setText(row, 0, park.getName());
 		parkTable.setText(row, 1, park.getNeighbourhoodName());
-		parkTable.setText(
-				row,
-				2,
-				String.valueOf(park.getStreetNumber().concat(" ")
-						.concat(park.getStreetName())));
-		// parkTable.setText(row, 3, park.getParkFacilities());
-		// parkTable.setText(row, 3, String.valueOf(park.getStreetName()));
-		// parkTable.setText(row, 4,
-		// String.valueOf(park.getGoogleMapDest().getLat())
-		// +String.valueOf(park.getGoogleMapDest().getLong()));
-		// parkTable.setText(row, 5, parkfacilities);
+		parkTable.setText(row, 2, String.valueOf(park.getStreetNumber().concat(" ").concat(park.getStreetName())));	
+		final String parkId = park.getParkId();
+		final String parkName =  park.getName();
+		Button showAreaButton = new Button("Status");
+		showAreaButton.addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event){
+
+				areaService.getArea(parkId, new AsyncCallback<Area[]>() {
+					public void onFailure(Throwable error) {
+						Window.alert("SORRY, SERVER NOT AVAILABLE");
+					}
+				    public void onSuccess(Area[] areas) {
+				    	successMsg.setText("Getting data from server...");
+				    	successMsg.setVisible(true);
+				    		showWeekendStatus(areas,parkName);
+				    		successMsg.setText("There are " + areas.length+" status notes.");
+				    	
+				    	
+					}
+				});
+			}
+		});
+		Button showFacilityButton = new Button("Facility");
+		showFacilityButton.addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event){
+
+				facilityService.getFacilitybyPark(parkId, new AsyncCallback<Facility[]>() {
+					public void onFailure(Throwable error) {
+						Window.alert("SORRY, SERVER NOT AVAILABLE");
+					}
+				    public void onSuccess(Facility[] facilities) {
+				    	successMsg.setText("Getting data from server...");
+				    	successMsg.setVisible(true);
+				    		showFacility(facilities,parkName);
+				    		successMsg.setText("There are " + facilities.length+" status notes.");
+				    	
+				    	
+					}
+				});
+			}
+		});
+		parkTable.setWidget(row, 3, showFacilityButton);
+		parkTable.setWidget(row, 4, showAreaButton);
+
+
+		}
+
+private void showWeekendStatus(Area[] areas,String parkName)
+{
+	FlexTable statusTable = new FlexTable();
+	statusTable.setText(0, 0, parkName);
+	statusTable.setText(1,0,"SiteArea");
+	statusTable.setText(1,1,"ClosureNote");
+	statusTable.setText(1,2,"WeekendStatus");
+	statusTable.setText(1,3,"Last Update on");
+
+	statusTable.getRowFormatter().addStyleName(0, "areaNameListHeader");
+	statusTable.getRowFormatter().addStyleName(1,"areaListHeader");
+	statusTable.addStyleName("parkList");
+	statusTable.setCellPadding(5);
+	
+	
+	PopupPanel pop = new PopupPanel();
+	if(areas.length==0)
+	{
+		Label l = new Label();
+		l.setText("No current status avaliable for  "+ parkName);
+		pop.setWidget(l);
 	}
+	else
+	{
+		int row=2;
+		for(Area a:areas)
+		{
+			statusTable.setText(row, 0, a.getSiteArea());
+			statusTable.setText(row, 1, a.getClosureNotes());
+			statusTable.setText(row, 2, a.getWeekendStatus());
+			statusTable.setText(row, 3, a.getLastUpdated());
+			row++;
+		}	
+		pop.setWidget(statusTable);
+	
+	}
+	pop.setAnimationEnabled(true);
+	pop.setAutoHideEnabled(true);
+	pop.setGlassEnabled(true);
+
+	pop.center();
+}
+private void showFacility(Facility[] facilities,String parkName)
+{
+	FlexTable facilityTable = new FlexTable();
+	facilityTable.setText(0, 0, parkName);
+	facilityTable.setText(1,0,"Facility");
+	facilityTable.setText(1,1,"Count");
+	
+
+	facilityTable.getRowFormatter().addStyleName(0, "areaNameListHeader");
+	facilityTable.getRowFormatter().addStyleName(1,"areaListHeader");
+	facilityTable.addStyleName("parkList");
+	facilityTable.setCellPadding(5);
+	
+	
+	PopupPanel pop = new PopupPanel();
+	if(facilities.length==0)
+	{
+		Label l = new Label();
+		l.setText("No facilities avaliable in "+ parkName);
+		pop.setWidget(l);
+	}
+	else
+	{
+		int row=2;
+		for(Facility f:facilities)
+		{
+			facilityTable.setText(row, 0, f.getFacility());
+			facilityTable.setText(row, 1, f.getFacilityCount());
+			
+			row++;
+		}	
+		pop.setWidget(facilityTable);
+	
+	}
+	pop.setAnimationEnabled(true);
+	pop.setAutoHideEnabled(true);
+	pop.setGlassEnabled(true);
+	pop.center();
+
+}
+
 
 	// The following methods have to do with the Map
 
@@ -462,7 +566,7 @@ public class ParkFinder implements EntryPoint {
 		successMsg.setText("Getting data from server...");
 		successMsg.setVisible(true);
 
-		parkService.getParks(new AsyncCallback<Park[]>() {
+		parkService.getParks(parklist,new AsyncCallback<Park[]>() {
 			public void onFailure(Throwable error) {
 				errorMessage
 						.setText("Error: failed to receive data from server");

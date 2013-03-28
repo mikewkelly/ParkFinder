@@ -19,6 +19,18 @@ body {
 	padding: 2px;
 	margin-bottom: 6px;
 }
+/* area list */
+.areaListHeader {
+	background-color: #9999CC;
+	color: white;
+	font-style: bold;
+}
+.areaNameListHeader {
+	background-color: #9400D3;
+	color: white;
+	font-weight: bolder;
+	font-size: Large;
+}
 
 /* input text box */
 .inputTextBox {

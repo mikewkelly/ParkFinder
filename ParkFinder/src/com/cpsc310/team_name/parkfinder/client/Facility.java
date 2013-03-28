@@ -14,22 +14,24 @@ public class Facility implements Serializable{
 	@PrimaryKey
 	private String facilityId;
 	@Persistent
-	private Long parkId;
+	private String parkId;
 	@Persistent
 	private String facility;
-	
+	@Persistent
+	private String facilityCount;
 	public Facility(){
 		// default constructor
 	}
 
 
-	public Facility(Long aParkId, String aFacilityType, String aFacilityId) {
+	public Facility(String aParkId, String aFacilityType, String aFacilityId, String aFacilityCount) {
 		parkId = aParkId;
 		facility = aFacilityType;
 		facilityId = aFacilityId;
+		facilityCount = aFacilityCount;
 	}
 
-	public Long getParkId() {
+	public String getParkId() {
 		return parkId;
 	}
 	
@@ -39,8 +41,10 @@ public class Facility implements Serializable{
 	public String getFacilityID(){
 		return facilityId;
 	}
-	
-	public void setParkId(Long id)
+	public String getFacilityCount(){
+		return facilityCount;
+	}
+	public void setParkId(String id)
 	{
 		parkId = id;
 	}
@@ -48,4 +52,5 @@ public class Facility implements Serializable{
 	{
 		facility = facilityToAdd;
 	}
+	
 }
