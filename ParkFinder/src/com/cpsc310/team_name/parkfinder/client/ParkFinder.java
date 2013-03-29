@@ -45,6 +45,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -59,7 +60,7 @@ public class ParkFinder implements EntryPoint {
 
 	// the main panel
 	DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
-
+	
 	// the header panel
 	VerticalPanel headerPanel = new VerticalPanel();
 
@@ -69,11 +70,12 @@ public class ParkFinder implements EntryPoint {
 	// for the search panel
 	private VerticalPanel searchPanel = new VerticalPanel();
 	private HorizontalPanel searchPanelContents = new HorizontalPanel();
-	private TextBox searchCriteriaTextBox = new TextBox();
+	private TextBox searchFacilityTextBox = new TextBox();
 	/*Not necessary for users to show map separately
 	 * private Button displayAllInMapButton = new Button("Display Parks in Map");
 	private Button clearMapButton = new Button("Clear Map");*/
-	private Button searchButton = new Button("Search");
+	
+	private Button searchFacilityButton = new Button("Search Facility");
 	private Label lastUpdateLabel = new Label();
 	private Label errorMessage = new Label();
 	private Label successMsg = new Label();
@@ -94,7 +96,6 @@ public class ParkFinder implements EntryPoint {
 	// the string list to store the primary keys
 	public ArrayList<String> parklist = new ArrayList<String>();
 	private ArrayList<String> facilitylist=new ArrayList<String>();
-	private ArrayList<String> typelist = new ArrayList<String>();
 	// the Async server objects
 	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
 	private final FacilityServiceAsync facilityService = GWT.create(FacilityService.class);
@@ -108,7 +109,7 @@ public class ParkFinder implements EntryPoint {
 		loadParkTable();
 
 		mainPanel.addNorth(headerPanel, 100);
-		mainPanel.addNorth(searchPanel, 80);
+		mainPanel.addNorth(searchPanel, 100);
 		mainPanel.add(tlp);
 		RootLayoutPanel.get().add(mainPanel);
 
@@ -123,32 +124,31 @@ public class ParkFinder implements EntryPoint {
 
 	public void loadParkTable() {
 		// table layout
-		// parkTable.setText(0,0,"Park ID");
+		
 		parkTable.setText(0, 0, "Park Name");
 		parkTable.setText(0, 1, "Neighbourhood");
 		parkTable.setText(0, 2, "Address");
-		// parkTable.setText(0,3,"GoogleMapDest");
 		parkTable.setText(0, 3, "Facilities");
 		parkTable.setText(0, 4, "Weekend Status");
-		// parkTable.setText(0,6,"Area");
 
 		parkTable.getRowFormatter().addStyleName(0, "parkListHeader");
 		parkTable.addStyleName("parkList");
 		parkTable.setCellPadding(10);
 
 		// used for future implementation on searching
-		searchPanelContents.add(searchCriteriaTextBox);
-		searchPanelContents.add(searchButton);
+		searchPanelContents.add(searchFacilityTextBox);
+		searchPanelContents.add(searchFacilityButton);
 		/*searchPanelContents.add(displayAllInMapButton);
 		searchPanelContents.add(clearMapButton);*/
 		searchPanelContents.addStyleName("inputTextBox");
 
-		searchButton.addStyleDependentName("search");
+		searchFacilityButton.addStyleDependentName("search");
 		errorMessage.setStyleName("errorMessage");
 		successMsg.setStyleName("successMessage");
 		errorMessage.setVisible(false);
 		successMsg.setVisible(false);
 
+		
 		searchPanel.add(searchPanelContents);
 		searchPanel.add(errorMessage);
 		searchPanel.add(successMsg);
@@ -156,15 +156,15 @@ public class ParkFinder implements EntryPoint {
 		tablePanel.add(parkTable);
 		tablePanel.add(lastUpdateLabel);
 
-		searchCriteriaTextBox.setFocus(true);
+		searchFacilityTextBox.setFocus(true);
 
 		importData();
 
 		
-		searchButton.addClickHandler(new ClickHandler(){
+		searchFacilityButton.addClickHandler(new ClickHandler(){
 
 			public void onClick(ClickEvent event) {
-					Search();
+					SearchFacility();
 			}
 			
 		});
@@ -219,15 +219,15 @@ public class ParkFinder implements EntryPoint {
 		});
 	}
 	
-private void Search() {
+private void SearchFacility() {
 	
 		clearMapAndList();
 
 		refreshTable();
 		parklist.clear();
 		facilitylist.clear();
-		facilityToSearch = searchCriteriaTextBox.getText().trim();
-		searchCriteriaTextBox.setFocus(true);
+		facilityToSearch = searchFacilityTextBox.getText().trim();
+		searchFacilityTextBox.setFocus(true);
 			
 		successMsg.setText("Getting " +facilityToSearch+ " from server...");
     	successMsg.setVisible(true);
@@ -428,7 +428,6 @@ private void showFacility(Facility[] facilities,String parkName)
 
 	// The following methods have to do with the Map
 
-	@SuppressWarnings("unchecked")
 	private void buildMap() {
 
 		LatLng teaSwampPark = LatLng.newInstance(49.257091, -123.098595);

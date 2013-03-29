@@ -33,7 +33,6 @@ public class FacilityServiceImpl extends RemoteServiceServlet implements
 	public Facility[] getFacility(String fac) {
 		
 		ArrayList<Facility> facility =  new ArrayList<Facility>();
-		System.out.println(searchFacility.getList().size());
 		String facilityType = searchFacility.criteriaToSearch(fac);
 
 		if(facilityType.isEmpty())

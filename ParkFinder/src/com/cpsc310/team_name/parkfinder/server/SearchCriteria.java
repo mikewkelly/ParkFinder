@@ -22,9 +22,10 @@ public class SearchCriteria {
 		String theType = null;
 		for(String str: stringList)
 		{
-			if(str.toLowerCase().contains(input.toLowerCase()));
+			if(str.toLowerCase().contains(input.toLowerCase()))
 			{
 				theType = str;
+				System.out.println(theType);
 			}
 		}
 		return theType;
