@@ -10,5 +10,5 @@ public interface ParkService extends RemoteService {
 	public void addPark(String parkId);
 	public Park[] getParks(ArrayList<String> idPara);
 	public void removePark(String parkId);
-	public void importParks();
+	public String[] importParks();
 }

@@ -9,6 +9,8 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -37,6 +39,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -44,6 +47,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -70,12 +74,16 @@ public class ParkFinder implements EntryPoint {
 	// for the search panel
 	private VerticalPanel searchPanel = new VerticalPanel();
 	private HorizontalPanel searchPanelContents = new HorizontalPanel();
+	private VerticalPanel listPanel = new VerticalPanel();
 	private TextBox searchFacilityTextBox = new TextBox();
 	/*Not necessary for users to show map separately
 	 * private Button displayAllInMapButton = new Button("Display Parks in Map");
 	private Button clearMapButton = new Button("Clear Map");*/
 	
 	private Button searchFacilityButton = new Button("Search Facility");
+	private Button searchParkButton = new Button("Search Park");
+    final ListBox nbhdDropBox = new ListBox();
+
 	private Label lastUpdateLabel = new Label();
 	private Label errorMessage = new Label();
 	private Label successMsg = new Label();
@@ -92,10 +100,12 @@ public class ParkFinder implements EntryPoint {
 
 
 	public String facilityToSearch=null;
+	public String nbhd="All";
 
 	// the string list to store the primary keys
 	public ArrayList<String> parklist = new ArrayList<String>();
 	private ArrayList<String> facilitylist=new ArrayList<String>();
+	private ArrayList<String> nbhdlist = new ArrayList<String>();
 	// the Async server objects
 	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
 	private final FacilityServiceAsync facilityService = GWT.create(FacilityService.class);
@@ -143,6 +153,7 @@ public class ParkFinder implements EntryPoint {
 		searchPanelContents.addStyleName("inputTextBox");
 
 		searchFacilityButton.addStyleDependentName("search");
+		searchParkButton.addStyleDependentName("search");
 		errorMessage.setStyleName("errorMessage");
 		successMsg.setStyleName("successMessage");
 		errorMessage.setVisible(false);
@@ -159,8 +170,17 @@ public class ParkFinder implements EntryPoint {
 		searchFacilityTextBox.setFocus(true);
 
 		importData();
-
 		
+		nbhdDropBox.addStyleDependentName("drop");
+		Label nbhdLabel = new Label("Select a neighbourhood");
+		nbhdLabel.addStyleName("nbhdlabel");
+		listPanel.add(nbhdLabel);
+		listPanel.add(nbhdDropBox);
+		nbhdDropBox.setVisibleItemCount(1);
+		searchPanelContents.add(listPanel);
+		// Add a drop box with the list types
+	    
+	    
 		searchFacilityButton.addClickHandler(new ClickHandler(){
 
 			public void onClick(ClickEvent event) {
@@ -168,13 +188,18 @@ public class ParkFinder implements EntryPoint {
 			}
 			
 		});
-	/*	displayAllInMapButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				displayAllInMap();
+		nbhdDropBox.addChangeHandler(new ChangeHandler(){
+			public void onChange(ChangeEvent event)
+			{
+				int selectIndex = nbhdDropBox.getSelectedIndex();
+				nbhd = nbhdDropBox.getValue(selectIndex);
+				System.out.println("changehandler "+nbhd);
 			}
+
 		});
+			
 		
-		clearMapButton.addClickHandler(new ClickHandler() {
+		/*clearMapButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				clearMapAndList();
 			}
@@ -184,13 +209,16 @@ public class ParkFinder implements EntryPoint {
 
 	private void importData() {
 		//import parks to GWT server
-		parkService.importParks(new AsyncCallback<Void>() {
+		parkService.importParks(new AsyncCallback<String[]>() {
 			public void onFailure(Throwable error) {
 				errorMessage.setText("Error: failed to import data");
 				errorMessage.setVisible(true);
 			}
-			public void onSuccess(Void ignore) {
-				
+			public void onSuccess(String[] neighborhood) {
+				nbhdDropBox.addItem("All");
+				for(String n:neighborhood)
+				{	nbhdDropBox.addItem(n);
+				}
 			}
 		});
 		//import facilities to GWT server
@@ -256,6 +284,7 @@ private void SearchFacility() {
 	    		}
 
 		    	parkService.getParks(parklist, new AsyncCallback<Park[]>() {
+		    		int row=1;
 					public void onFailure(Throwable error) {
 						errorMessage.setText("Error: failed to receive data from server");
 						errorMessage.setVisible(true);
@@ -263,22 +292,46 @@ private void SearchFacility() {
 				    public void onSuccess(Park[] parks) {
 				    	successMsg.setText("Getting data from server...");
 				    	successMsg.setVisible(true);
-				    	int row=1;
-				    	for(Park p:parks) {
+				    	
+				    	if(!nbhd.equals("All"))
+				    	{
+				    		for(Park p:parks)
+				    		{
+				    			if(p.getNeighbourhoodName().equals(nbhd))
+				    			{	
+				    				showParkInTable(p,row);
+				    				row++;				    		
+				    			}
+				    		}
 				    		
-				    		showParkInTable(p,row);
-				    		row++;				    		
-				  
-			    		}
-				    	if(!facilityToSearch.isEmpty())
-				    	successMsg.setText("Found parks with " + facilityToSearch+ " : " + parklist.size());
+				    	}
 				    	else
-				    	successMsg.setText("Display all parks in Vancouver");
-				    }
-				});
+				    	{
+				    		for(Park p:parks) {
+					    		showParkInTable(p,row);
+					    		row++;				    		
+					  
+				    		}
+				    	}
+				    	
+				    	
 				displayAllInMap();
+				if(!facilityToSearch.isEmpty())
+		    	{
+		    		if(!nbhd.equals("All"))
+		    		successMsg.setText("Found parks with " + facilityToSearch+ " : " + row--+ " in "+ nbhd+" Neighbourhood.");
+		    		else
+		    		successMsg.setText("Found parks with " + facilityToSearch+ " : " + row--+" in Vancouver.");
+		    	}
+		    	else{
+		    		if(nbhd.equals("All"))
+		    			successMsg.setText("Display all "+row--+ "parks in Vancouver");
+		    		else
+		    			successMsg.setText("Display all " + row--+" parks in " + nbhd +" neighbourhood.");
+		    	}
+		    }
+		});
 
-		    	successMsg.setText("Facility Displayed: " + facilitylist.size());
 			}
 			
 		});
@@ -573,9 +626,24 @@ private void showFacility(Facility[] facilities,String parkName)
 			}
 
 			public void onSuccess(Park[] parks) {
-				successMsg.setText("Getting data from server...");
-				successMsg.setVisible(true);
-				updateMap(parks);
+				
+				ArrayList<Park> newparklist = new ArrayList<Park>();
+				if(!nbhd.equals("All"))
+				{
+					for(Park p:parks)
+				
+					{
+					
+					if(p.getNeighbourhoodName().equals(nbhd))
+					{
+						newparklist.add(p);
+						
+					}
+				}
+					updateMap(newparklist.toArray(new Park[newparklist.size()]));
+			}
+				else
+					updateMap(parks);
 			}
 		});
 

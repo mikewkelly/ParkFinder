@@ -21,6 +21,8 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	private static final Logger LOG = Logger.getLogger(ParkServiceImpl.class.getName());
 	private static final PersistenceManagerFactory PMF =
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
+	private ArrayList<String> names=new ArrayList<String>();
+	private ArrayList<String> nbhd = new ArrayList<String>();
 	
 	@Override
 	public void addPark(String parkId) {
@@ -79,16 +81,26 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	}
 	
 	@Override
-	public void importParks() {
+	public String[] importParks() {
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Park> parks = new ArrayList<Park>();
 		ParserFacade pf = new ParserFacade();
 		parks = pf.getPark();
+		for(Park p:parks)
+		{
+		 if(!names.contains(p.getName()))
+			 names.add(p.getName());
+		 if(!nbhd.contains(p.getNeighbourhoodName()))
+			 nbhd.add(p.getNeighbourhoodName());
+		}
 		try {			
 			pm.makePersistentAll(parks);
 		} finally {
 			pm.close();		}
+		return nbhd.toArray(new String[nbhd.size()]);
 	}
+	
+	
 	
 	/*public Park testParks(String id, String name,
 			String neighbourhood, String streetNo, String streetName) {

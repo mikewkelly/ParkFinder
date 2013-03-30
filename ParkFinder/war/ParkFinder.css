@@ -35,16 +35,27 @@ body {
 /* input text box */
 .inputTextBox {
 	margin: 10px 0px 15px 0px;
+	width:150px;
 }
 
 /* button */
 .gwt-Button-search {
-	width: 100px;
+	width: 150px;
+	length: 100px
 	padding: 5px 5px;
 	border: 1px #FF00FF;
 	background: transparent;
 }
 
+.gwt-ListBox-drop{
+	font-weight:bold;
+	font-color:white;
+	background-color:3333FF;
+	
+}
+.gwt-Label-nbhdlabel{
+	font-weigth:bold;
+}
 /* error message */
 .errorMessage {
 	color: red;

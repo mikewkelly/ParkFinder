@@ -34,7 +34,7 @@ public class FacilityServiceImpl extends RemoteServiceServlet implements
 		
 		ArrayList<Facility> facility =  new ArrayList<Facility>();
 		String facilityType = searchFacility.criteriaToSearch(fac);
-
+		
 		if(facilityType.isEmpty())
 		{
 			PersistenceManager pm = getPersistenceManager();
