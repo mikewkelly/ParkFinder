@@ -74,11 +74,10 @@ public class ParkFinder implements EntryPoint {
 	// for the search panel
 	private VerticalPanel searchPanel = new VerticalPanel();
 	private HorizontalPanel searchPanelContents = new HorizontalPanel();
+	private HorizontalPanel searchPanelPark = new HorizontalPanel();
 	private VerticalPanel listPanel = new VerticalPanel();
 	private TextBox searchFacilityTextBox = new TextBox();
-	/*Not necessary for users to show map separately
-	 * private Button displayAllInMapButton = new Button("Display Parks in Map");
-	private Button clearMapButton = new Button("Clear Map");*/
+	private TextBox searchParkTextBox = new TextBox();
 	
 	private Button searchFacilityButton = new Button("Search Facility");
 	private Button searchParkButton = new Button("Search Park");
@@ -87,7 +86,9 @@ public class ParkFinder implements EntryPoint {
 	private Label lastUpdateLabel = new Label();
 	private Label errorMessage = new Label();
 	private Label successMsg = new Label();
-
+	private Label facilityLabel = new Label("Enter the type of facility:");
+	private Label parkLabel = new Label("Or, enter the park name:");
+	private Label nbhdLabel = new Label("Select a neighbourhood");
 	// for the table
 	private FlexTable parkTable = new FlexTable();
 	private VerticalPanel tablePanel = new VerticalPanel();
@@ -101,6 +102,7 @@ public class ParkFinder implements EntryPoint {
 
 	public String facilityToSearch=null;
 	public String nbhd="All";
+	public String searchParkName =null;
 
 	// the string list to store the primary keys
 	public ArrayList<String> parklist = new ArrayList<String>();
@@ -119,7 +121,7 @@ public class ParkFinder implements EntryPoint {
 		loadParkTable();
 
 		mainPanel.addNorth(headerPanel, 100);
-		mainPanel.addNorth(searchPanel, 100);
+		mainPanel.addNorth(searchPanel, 165);
 		mainPanel.add(tlp);
 		RootLayoutPanel.get().add(mainPanel);
 
@@ -145,12 +147,14 @@ public class ParkFinder implements EntryPoint {
 		parkTable.addStyleName("parkList");
 		parkTable.setCellPadding(10);
 
-		// used for future implementation on searching
+		
 		searchPanelContents.add(searchFacilityTextBox);
 		searchPanelContents.add(searchFacilityButton);
-		/*searchPanelContents.add(displayAllInMapButton);
-		searchPanelContents.add(clearMapButton);*/
 		searchPanelContents.addStyleName("inputTextBox");
+		
+		searchPanelPark.add(searchParkTextBox);
+		searchPanelPark.add(searchParkButton);
+		searchPanelPark.addStyleName("inputTextBox");
 
 		searchFacilityButton.addStyleDependentName("search");
 		searchParkButton.addStyleDependentName("search");
@@ -160,7 +164,11 @@ public class ParkFinder implements EntryPoint {
 		successMsg.setVisible(false);
 
 		
+		
+		searchPanel.add(facilityLabel);
 		searchPanel.add(searchPanelContents);
+		searchPanel.add(parkLabel);
+		searchPanel.add(searchPanelPark);
 		searchPanel.add(errorMessage);
 		searchPanel.add(successMsg);
 
@@ -172,7 +180,7 @@ public class ParkFinder implements EntryPoint {
 		importData();
 		
 		nbhdDropBox.addStyleDependentName("drop");
-		Label nbhdLabel = new Label("Select a neighbourhood");
+		
 		nbhdLabel.addStyleName("nbhdlabel");
 		listPanel.add(nbhdLabel);
 		listPanel.add(nbhdDropBox);
@@ -193,18 +201,17 @@ public class ParkFinder implements EntryPoint {
 			{
 				int selectIndex = nbhdDropBox.getSelectedIndex();
 				nbhd = nbhdDropBox.getValue(selectIndex);
-				System.out.println("changehandler "+nbhd);
 			}
 
 		});
 			
 		
-		/*clearMapButton.addClickHandler(new ClickHandler() {
+		searchParkButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				clearMapAndList();
+				getParkbyName();
 			}
 		});
-*/
+
 	}
 
 	private void importData() {
@@ -319,15 +326,15 @@ private void SearchFacility() {
 				if(!facilityToSearch.isEmpty())
 		    	{
 		    		if(!nbhd.equals("All"))
-		    		successMsg.setText("Found parks with " + facilityToSearch+ " : " + row--+ " in "+ nbhd+" Neighbourhood.");
+		    		successMsg.setText("Found parks with " + facilityToSearch+ " : " + --row+ " in "+ nbhd+" Neighbourhood.");
 		    		else
-		    		successMsg.setText("Found parks with " + facilityToSearch+ " : " + row--+" in Vancouver.");
+		    		successMsg.setText("Found parks with " + facilityToSearch+ " : " + --row+" in Vancouver.");
 		    	}
 		    	else{
 		    		if(nbhd.equals("All"))
-		    			successMsg.setText("Display all "+row--+ "parks in Vancouver");
+		    			successMsg.setText("Display all "+--row+ "parks in Vancouver");
 		    		else
-		    			successMsg.setText("Display all " + row--+" parks in " + nbhd +" neighbourhood.");
+		    			successMsg.setText("Display all " + --row+" parks in " + nbhd +" neighbourhood.");
 		    	}
 		    }
 		});
@@ -343,6 +350,67 @@ private void SearchFacility() {
 		}
 	}
 	
+	
+private void getParkbyName()
+{
+	clearMapAndList();
+	refreshTable();
+	parklist.clear();
+	facilitylist.clear();
+	searchParkName = searchParkTextBox.getText().trim();
+	searchParkTextBox.setFocus(true);
+		
+	successMsg.setText("Getting " +facilityToSearch+ " from server...");
+	successMsg.setVisible(true);
+	parkService.getParkByName(searchParkName,nbhd, new AsyncCallback<Park[]>() {
+		int row=1;
+		public void onFailure(Throwable error) {
+			errorMessage.setText("Error: failed to receive data from server");
+			errorMessage.setVisible(true);
+		}
+	    public void onSuccess(Park[] parks) {
+	    	successMsg.setText("Getting data from server...");
+	    	successMsg.setVisible(true);
+	    	
+	    	
+	    		for(Park p:parks)
+	    		{
+	    				
+	    				showParkInTable(p,row);
+	    				if(!parklist.contains(p.getParkId()))
+	    				parklist.add(p.getParkId());
+	    				row++;				    		
+	    			
+	    		}
+	    		
+	    	
+	    	
+	    	
+	    	
+	    displayAllInMap();
+		
+	if(!searchParkName.isEmpty())
+	{
+		if(!nbhd.equals("All"))
+		successMsg.setText("Found parks with ' " + searchParkName+ " ' : " + --row+ " in "+ nbhd+" Neighbourhood.");
+		else
+		successMsg.setText("Found parks with ' " + searchParkName+ " ' : " + --row+" in Vancouver.");
+	}
+	else
+	{
+		if(nbhd.equals("All"))
+			successMsg.setText("Display all "+ --row+ "parks in Vancouver");
+		else
+			successMsg.setText("Display all " + --row+" parks in " + nbhd +" neighbourhood.");
+	}
+ }
+});
+
+}
+
+
+
+
 
 private void showParkInTable(Park park,int row) {
 		

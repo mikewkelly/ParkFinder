@@ -59,6 +59,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 		return park.toArray(new Park[park.size()]);
 		
 	}
+	
 
 	@Override
 	public void removePark(String parkId) {
@@ -98,6 +99,84 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 		} finally {
 			pm.close();		}
 		return nbhd.toArray(new String[nbhd.size()]);
+	}
+
+	@Override
+	public Park[] getParkByName(String parkName, String nbhd) 
+	{
+		ArrayList<Park> nameMatchingParks =  new ArrayList<Park>();
+		
+		if(parkName.isEmpty())
+		{
+			PersistenceManager pm = getPersistenceManager();
+			System.out.println("find all");
+
+			
+		try
+		{
+			Query q = pm.newQuery(Park.class);
+			q.setOrdering("parkId");
+			List<Park> parks = (List<Park>) q.execute();
+			if(nbhd.equals("All"))
+			{	
+				for (Park p:parks)
+				{
+					nameMatchingParks.add(p);
+				
+				}
+			}
+			else
+			{
+				for(Park p:parks)
+				{
+					if(p.getNeighbourhoodName().equals(nbhd))
+						nameMatchingParks.add(p);
+						
+				}
+			}
+		}finally
+		{
+			pm.close();
+		}
+		}
+		
+		else
+		{	
+			PersistenceManager pm = getPersistenceManager();
+			
+
+
+		try
+		{
+			Query q = pm.newQuery(Park.class);
+			q.setOrdering("parkId");
+			List<Park> parks = (List<Park>) q.execute();
+			if(nbhd.equals("All"))
+			{	
+				for (Park p:parks)
+				{
+					if(p.getName().toLowerCase().contains(parkName.toLowerCase()))
+					nameMatchingParks.add(p);
+				
+				}
+			}
+			else
+			{
+				for(Park p:parks)
+				{
+					if(p.getNeighbourhoodName().equals(nbhd)
+							&&p.getName().toLowerCase().contains(parkName.toLowerCase()))
+						nameMatchingParks.add(p);
+						
+				}
+			}
+		}finally
+		{
+			pm.close();
+		}
+		}
+		return nameMatchingParks.toArray(new Park[nameMatchingParks.size()]);
+				
 	}
 	
 	
