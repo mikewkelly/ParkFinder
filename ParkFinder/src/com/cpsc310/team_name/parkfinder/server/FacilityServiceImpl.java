@@ -33,12 +33,10 @@ public class FacilityServiceImpl extends RemoteServiceServlet implements
 	public Facility[] getFacility(String fac) {
 		
 		ArrayList<Facility> facility =  new ArrayList<Facility>();
-		String facilityType = searchFacility.criteriaToSearch(fac);
 		
-		if(facilityType.isEmpty())
+		if(fac.isEmpty()||fac.length()<4)
 		{
 			PersistenceManager pm = getPersistenceManager();
-			System.out.println("find all");
 
 			
 		try
@@ -60,9 +58,10 @@ public class FacilityServiceImpl extends RemoteServiceServlet implements
 		
 		else
 		{	
+			String facilityType = searchFacility.getSimilarFacility(fac);
+
 			PersistenceManager pm = getPersistenceManager();
-			System.out.println("find certain facility");
-			System.out.println(facilityType);
+			
 
 
 		try
@@ -143,7 +142,7 @@ public class FacilityServiceImpl extends RemoteServiceServlet implements
 
 			pm.close();		
 			}
-		searchFacility.setSearchFacility(type);
+		searchFacility.setSearch(type);
 		
 
 	}

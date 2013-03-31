@@ -266,9 +266,7 @@ private void SearchFacility() {
 			
 		successMsg.setText("Getting " +facilityToSearch+ " from server...");
     	successMsg.setVisible(true);
-    	
-    	System.out.println("facility "+facilityToSearch);
-	
+    		
     	
 			facilityService.getFacility(facilityToSearch,new AsyncCallback<Facility[]>() {
     	
@@ -360,7 +358,7 @@ private void getParkbyName()
 	searchParkName = searchParkTextBox.getText().trim();
 	searchParkTextBox.setFocus(true);
 		
-	successMsg.setText("Getting " +facilityToSearch+ " from server...");
+	successMsg.setText("Getting " +searchParkName+ " from server...");
 	successMsg.setVisible(true);
 	parkService.getParkByName(searchParkName,nbhd, new AsyncCallback<Park[]>() {
 		int row=1;
@@ -389,19 +387,22 @@ private void getParkbyName()
 	    	
 	    displayAllInMap();
 		
-	if(!searchParkName.isEmpty())
+	if(!searchParkName.isEmpty()||searchParkName.length()<=2)
 	{
-		if(!nbhd.equals("All"))
-		successMsg.setText("Found parks with ' " + searchParkName+ " ' : " + --row+ " in "+ nbhd+" Neighbourhood.");
-		else
-		successMsg.setText("Found parks with ' " + searchParkName+ " ' : " + --row+" in Vancouver.");
+			if(nbhd.equals("All"))
+			successMsg.setText("Display all "+ --row+ "parks in Vancouver." +
+					" You can write more specific for park name.");
+			else
+			successMsg.setText("Display all " + --row+" parks in " + nbhd +" neighbourhood."+
+					" You can write more specific for park name.");
 	}
 	else
 	{
-		if(nbhd.equals("All"))
-			successMsg.setText("Display all "+ --row+ "parks in Vancouver");
-		else
-			successMsg.setText("Display all " + --row+" parks in " + nbhd +" neighbourhood.");
+			if(!nbhd.equals("All"))
+			successMsg.setText("Found parks with ' " + searchParkName+ " ' : " + --row+ " in "+ nbhd+" Neighbourhood.");
+			else
+			successMsg.setText("Found parks with ' " + searchParkName+ " ' : " + --row+" in Vancouver.");
+	
 	}
  }
 });

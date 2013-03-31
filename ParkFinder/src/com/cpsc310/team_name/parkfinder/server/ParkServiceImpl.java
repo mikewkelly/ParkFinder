@@ -23,6 +23,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 	private ArrayList<String> names=new ArrayList<String>();
 	private ArrayList<String> nbhd = new ArrayList<String>();
+	private SearchCriteria search = new SearchCriteria();
 	
 	@Override
 	public void addPark(String parkId) {
@@ -98,6 +99,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 			pm.makePersistentAll(parks);
 		} finally {
 			pm.close();		}
+		search.setSearch(names);
 		return nbhd.toArray(new String[nbhd.size()]);
 	}
 
@@ -106,7 +108,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	{
 		ArrayList<Park> nameMatchingParks =  new ArrayList<Park>();
 		
-		if(parkName.isEmpty())
+		if(parkName.isEmpty()||parkName.length()<=2)
 		{
 			PersistenceManager pm = getPersistenceManager();
 			System.out.println("find all");
@@ -142,6 +144,8 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 		
 		else
 		{	
+			
+			ArrayList<String> guess = search.getSimilarNames(parkName);
 			PersistenceManager pm = getPersistenceManager();
 			
 
@@ -155,7 +159,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 			{	
 				for (Park p:parks)
 				{
-					if(p.getName().toLowerCase().contains(parkName.toLowerCase()))
+					if(guess.contains(p.getName().toLowerCase()))
 					nameMatchingParks.add(p);
 				
 				}
@@ -165,7 +169,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 				for(Park p:parks)
 				{
 					if(p.getNeighbourhoodName().equals(nbhd)
-							&&p.getName().toLowerCase().contains(parkName.toLowerCase()))
+							&&guess.contains(p.getName().toLowerCase()))
 						nameMatchingParks.add(p);
 						
 				}
@@ -181,19 +185,5 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	
 	
 	
-	/*public Park testParks(String id, String name,
-			String neighbourhood, String streetNo, String streetName) {
-		// test
-		//-----
-		PersistenceManager pm = getPersistenceManager();
-		Park aPark = new Park(id);
-		aPark.setName(name);
-		aPark.setNeighbourhoodName(neighbourhood);
-		aPark.setStreetNumber(streetNo);
-		aPark.setStreetName(streetName);
-		pm.makePersistent(aPark);
-		return aPark;
-		//-----
-	}*/
 
 }
