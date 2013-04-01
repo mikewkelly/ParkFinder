@@ -93,14 +93,10 @@ public class SearchCriteria {
 			int j = 0;
 			int temp = 0;
 			int count=0;
-			System.out.println(str);
-			System.out.println(input);
-			System.out.println(str.length()+"  "+input.length());
+			
 			while(i<input.length()-1&&input.length()<=str.length())
 			{
-				System.out.println("i = "+i);
-				System.out.println("j = "+j);
-				System.out.println("count = "+count);
+				
 				if(inputArray[i]==matchArray[j])
 				{
 					i++;

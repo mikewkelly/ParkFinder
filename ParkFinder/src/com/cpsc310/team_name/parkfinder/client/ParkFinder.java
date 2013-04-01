@@ -121,7 +121,7 @@ public class ParkFinder implements EntryPoint {
 		loadParkTable();
 
 		mainPanel.addNorth(headerPanel, 100);
-		mainPanel.addNorth(searchPanel, 165);
+		mainPanel.addNorth(searchPanel, 175);
 		mainPanel.add(tlp);
 		RootLayoutPanel.get().add(mainPanel);
 
