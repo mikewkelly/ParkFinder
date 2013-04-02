@@ -87,7 +87,7 @@ public class FacilityServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public Facility[] getFacilitybyPark(String parkId) {
+	public Facility[] getFacilitybyPark(Long parkId) {
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Facility> facility =  new ArrayList<Facility>();
 		

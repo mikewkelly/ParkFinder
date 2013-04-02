@@ -90,7 +90,7 @@ public class WeekendPlayfieldStatusParser {
 			Element parkContents = (Element) parkNodeList.item(i); // parkContents is an individual park node's contents
 //			//Get the ID of the park
 
-			String ID = parkContents.getAttribute("ID");
+			Long ID = Long.parseLong(parkContents.getAttribute("ID"));
 			// get the park name
 			tempParkName.append(parkContents.getElementsByTagName("ParkName").item(0).getFirstChild().getNodeValue());
 		

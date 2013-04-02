@@ -1,6 +1,8 @@
 package com.cpsc310.team_name.parkfinder.client;
 
 import java.io.Serializable;
+
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -13,7 +15,7 @@ public class Park implements Serializable{
 	
 
 	@PrimaryKey
-	private String parkId;
+	private Long parkId;
 	
 	@Persistent
 	private String name;
@@ -24,8 +26,6 @@ public class Park implements Serializable{
 	@Persistent
 	private String streetName;
 	
-	//@Persistent(serialized = "true")
-	//private LatLong googleMapDest;
 	@Persistent
 	private String googleMapDest;
 	
@@ -41,12 +41,12 @@ public class Park implements Serializable{
 		// default constructor
 	}
 	
-	public Park(String theParkId) {
+	public Park(Long theParkId) {
 
 		parkId = theParkId;
 	}
 	
-	public String getParkId() {
+	public Long getParkId() {
 		return parkId;
 	}
 	

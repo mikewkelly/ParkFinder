@@ -14,7 +14,7 @@ public class Area implements Serializable {
 	@PrimaryKey
 	private String areaId; // a value unique to each Area object
 	@Persistent
-	private String parkId;
+	private Long parkId;
 	@Persistent
 	private String parkName;
 	@Persistent
@@ -32,7 +32,7 @@ public class Area implements Serializable {
 		
 	}
 	
-	public Area(String theParkId, String theAreaId,String anArea) {
+	public Area(Long theParkId, String theAreaId,String anArea) {
 		parkId = theParkId;
 		siteArea = anArea;
 		areaId = theAreaId;
@@ -42,7 +42,7 @@ public class Area implements Serializable {
 	}
 	
 	
-	public String getParkId() {
+	public Long getParkId() {
 		return parkId;
 	}
 	

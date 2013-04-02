@@ -2,14 +2,44 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <link type="text/css" rel="stylesheet" href="ParkFinder.css">
+    
     <title>Vancouver Parks and Facilities Finder</title>
     
     <script type="text/javascript" language="javascript" src="parkfinder/parkfinder.nocache.js"></script>
+    
   </head>
   <body>
-	<img src="images/parkfinder_logo2_small.png" height=100 />
-    <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
+    <div id="fb-root"></div>
+    
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "http://connect.facebook.net/en_US/all.js#xfbml=1&appId=352889101494867";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+    
+    <script>
+        function login() {
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    testAPI();
+                } else {
+                    alert('Cancelled.');
+                }   
+                });
+        }
+        function testAPI() {
+        FB.api('/me', function(response) {
+           console.log('Logged in.');
+           alert('Good to see you, ' + response.name + '.');
+            });
+        }
+    </script>    
+    
+   
+    
+    <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>    
     
     <noscript>
       <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
@@ -17,6 +47,6 @@
         in order for this application to display correctly.
       </div>
     </noscript>
-
+    
   </body>
 </html>

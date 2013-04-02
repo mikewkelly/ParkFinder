@@ -9,6 +9,6 @@ public interface FacilityService extends RemoteService{
 	public Facility[] getFacility(String facilityType);
 	public void removeFacility(Long parkId);
 	public void importFacility();
-	public Facility[] getFacilitybyPark(String parkId);
+	public Facility[] getFacilitybyPark(Long parkId);
 }
 

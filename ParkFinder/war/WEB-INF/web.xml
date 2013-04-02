@@ -37,6 +37,27 @@
     <url-pattern>/parkfinder/areaservice</url-pattern>
   </servlet-mapping>
 
+
+  <servlet>
+  	<servlet-name>loginService</servlet-name>
+  	<servlet-class>com.cpsc310.team_name.parkfinder.server.LoginServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>loginService</servlet-name>
+  	<url-pattern>/parkfinder/login</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  	<servlet-name>userSearchService</servlet-name>
+  	<servlet-class>com.cpsc310.team_name.parkfinder.server.UserSearchServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>userSearchService</servlet-name>
+  	<url-pattern>/parkfinder/usersearchservice</url-pattern>
+  </servlet-mapping>
+  
   <servlet>
     <servlet-name>SystemServiceServlet</servlet-name>
     <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>

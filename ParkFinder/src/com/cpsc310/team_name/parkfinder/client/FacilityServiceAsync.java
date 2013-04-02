@@ -8,7 +8,7 @@ public interface FacilityServiceAsync {
 	public void removeFacility(Long parkId, AsyncCallback<Void> async);
 	public void getFacility(String facilityType,AsyncCallback<Facility[]> async);
 	public void importFacility(AsyncCallback<Void> async);
-	public void getFacilitybyPark(String parkId,
+	public void getFacilitybyPark(Long parkId,
 			AsyncCallback<Facility[]> asyncCallback);
 }
 

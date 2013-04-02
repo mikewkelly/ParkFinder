@@ -19,26 +19,12 @@ public class SearchCriteria {
 	}
 		
 	
-	public String criteriaToSearch(String input){
-		String theType = null;
-		for(String str: stringList)
-		{
-			if(str.toLowerCase().contains(input.toLowerCase()))
-			{
-				theType = str;
-				System.out.println(theType);
-			}
-		}
-		return theType;
-		
-		
-	}
-	
 	public String getSimilarFacility(String input)
 	{
 		String goodGuess = null;
 		char[] inputArray = input.toLowerCase().toCharArray();
 		int count = 0;
+		
 		for(String str:stringList)
 		{
 			char[] matchArray = str.toLowerCase().toCharArray(); 

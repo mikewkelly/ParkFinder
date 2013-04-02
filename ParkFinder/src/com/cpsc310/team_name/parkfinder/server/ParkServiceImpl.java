@@ -26,7 +26,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	private SearchCriteria search = new SearchCriteria();
 	
 	@Override
-	public void addPark(String parkId) {
+	public void addPark(Long parkId) {
 		PersistenceManager pm = getPersistenceManager();
 		try{
 			pm.makePersistent(new Park(parkId));
@@ -41,11 +41,11 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	}
 
 	@Override
-	public Park[] getParks(ArrayList<String> idPara) {
+	public Park[] getParks(ArrayList<Long> idPara) {
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Park> park = new ArrayList<Park>();
 		try{
-			for(String str:idPara)
+			for(Long str:idPara)
 			{	
 			
 		        Park p = pm.getObjectById(Park.class, str);
@@ -63,7 +63,7 @@ public class ParkServiceImpl extends RemoteServiceServlet implements ParkService
 	
 
 	@Override
-	public void removePark(String parkId) {
+	public void removePark(Long parkId) {
 		PersistenceManager pm = getPersistenceManager();
 		try{
 			long deleteCount = 0;

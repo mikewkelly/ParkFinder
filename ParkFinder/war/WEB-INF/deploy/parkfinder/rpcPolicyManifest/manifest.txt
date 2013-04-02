@@ -1,2 +1,7 @@
 # Module parkfinder
 # RPC service class, partial path of RPC policy file
+com.cpsc310.team_name.parkfinder.client.FacilityService, 25A03965BCFBD1E46588F360954C4C84.gwt.rpc
+com.cpsc310.team_name.parkfinder.client.ParkService, 3C650CDCC7C93E9323FD687F196F5D41.gwt.rpc
+com.cpsc310.team_name.parkfinder.client.LoginService, 6635BE0FE4AC7DD1371A7ABD1D94E75F.gwt.rpc
+com.cpsc310.team_name.parkfinder.client.AreaService, B81760E9F8FFF6D22423D0951B07EB7C.gwt.rpc
+com.cpsc310.team_name.parkfinder.client.UserSearchService, 50847E714D157C527A3BB5D161E3A545.gwt.rpc

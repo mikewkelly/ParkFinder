@@ -143,7 +143,7 @@ public class ParksListingParser {
 						
 						// create a new Facility instance and add it to parkFacilities
 						//TODO make type with count
-						Facility f = new Facility(tempParkID.toString(), type, FacilityID, count);
+						Facility f = new Facility(Long.parseLong(tempParkID.toString()), type, FacilityID, count);
 						initialFacility.add(f);
 					}
 
@@ -152,7 +152,7 @@ public class ParksListingParser {
 			
 				// Construct a new Park instance using collected data and add it to initialParks
 
-				Park p = new Park(tempParkID.toString());
+				Park p = new Park(Long.parseLong(tempParkID.toString()));
 				p.setName(tempParkName.toString());
 				p.setStreetName(tempStreetName.toString());
 				p.setStreetNumber(tempStreetNumber.toString());

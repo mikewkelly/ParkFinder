@@ -21,13 +21,13 @@ public class AreaServiceImpl extends RemoteServiceServlet implements
 	private static final PersistenceManagerFactory PMF =
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 	
-	public void addArea(String parkId) {
+	public void addArea(Long parkId) {
 		//TODO
 	}
 	
 
 	
-	public Area[] getArea(String parkID) {
+	public Area[] getArea(Long parkID) {
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Area> theArea =  new ArrayList<Area>();
 		
@@ -53,7 +53,7 @@ public class AreaServiceImpl extends RemoteServiceServlet implements
 	}
 
 	
-	public void removeArea(String parkId) {
+	public void removeArea(Long parkId) {
 		// TODO Auto-generated method stub
 
 	}

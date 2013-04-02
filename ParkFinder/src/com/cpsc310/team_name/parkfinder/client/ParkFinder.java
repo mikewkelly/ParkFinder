@@ -32,12 +32,15 @@ import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
@@ -81,6 +84,10 @@ public class ParkFinder implements EntryPoint {
 	
 	private Button searchFacilityButton = new Button("Search Facility");
 	private Button searchParkButton = new Button("Search Park");
+	private Button showPreviousSearchfac = new Button("Previous Search");
+	private Button fbLoginButton = new Button("Facebook Login");
+
+
     final ListBox nbhdDropBox = new ListBox();
 
 	private Label lastUpdateLabel = new Label();
@@ -89,6 +96,8 @@ public class ParkFinder implements EntryPoint {
 	private Label facilityLabel = new Label("Enter the type of facility:");
 	private Label parkLabel = new Label("Or, enter the park name:");
 	private Label nbhdLabel = new Label("Select a neighbourhood");
+	private Label userStatus = new Label();
+	private ListBox previousSearchfac = new ListBox();
 	// for the table
 	private FlexTable parkTable = new FlexTable();
 	private VerticalPanel tablePanel = new VerticalPanel();
@@ -103,27 +112,101 @@ public class ParkFinder implements EntryPoint {
 	public String facilityToSearch=null;
 	public String nbhd="All";
 	public String searchParkName =null;
+	// HTML string for the FB Send and Like buttons
+		private String html = "<div class='fb-send' data-href='http://l2e-team-name.appspot.com'></div>"
+				+ "<div class='fb-like' data-href='http://l2e-team-name.appspot.com' "
+				+ "data-width='150' data-show-faces='false'></div>";
+
+		// HTMLPanel for the FB Send and Like buttons
+		HTMLPanel fbPanel = new HTMLPanel(html);
 
 	// the string list to store the primary keys
-	public ArrayList<String> parklist = new ArrayList<String>();
+	public ArrayList<Long> parklist = new ArrayList<Long>();
 	private ArrayList<String> facilitylist=new ArrayList<String>();
 	private ArrayList<String> nbhdlist = new ArrayList<String>();
+	private String[] previousSearch = new String[3];
 	// the Async server objects
 	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
 	private final FacilityServiceAsync facilityService = GWT.create(FacilityService.class);
 	private final AreaServiceAsync areaService = GWT.create(AreaService.class);
+	private final UserSearchServiceAsync searchService = GWT.create(UserSearchService.class);
+
+	
+
+	// for login
+	private String adminAccount = "admin@gmail.com";
+	private LoginInfo loginInfo = null;
+	private HorizontalPanel loginPanel = new HorizontalPanel();
+	private Label loginLabel = new Label("Please sign in to your Google Account to access the ParkFinder application.");
+	private Anchor signInLink = new Anchor("Sign In"); 
+	private Anchor signOutLink = new Anchor("Sign Out");
 
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
 
-		loadParkTable();
+		LoginServiceAsync loginService = GWT.create(LoginService.class);
+		loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
+			public void onFailure(Throwable error) {
+			  handleError(error);
+			}
 
+			public void onSuccess(LoginInfo result) {
+				loginInfo = result;
+				if(loginInfo.isLoggedIn()) {
+					Image image = new Image();
+					image.setUrl("images/parkfinder_logo2_small.png");
+					headerPanel.add(image);
+
+					Resources.INSTANCE.ClientParkFinder().ensureInjected();
+					loadParkTable();
+					headerPanel.setPixelSize(1280, 125);
+					headerPanel.add(fbPanel);
+					fbPanel.setVisible(true);
+					mainPanel.addNorth(headerPanel, 130);
+					mainPanel.addNorth(userStatus, 20);
+					userStatus.setText("Welcome, " + loginInfo.getEmailAddress());
+					mainPanel.addNorth(signOutLink, 20);
+					signOutLink.setHref(loginInfo.getLogoutUrl());
+					mainPanel.addNorth(searchPanel, 190);
+					mainPanel.add(tlp);
+					RootLayoutPanel.get().add(mainPanel);
+
+					// Async load of Map API
+					Maps.loadMapsApi("", "2", false, new Runnable() {
+						public void run() {
+							buildMap();
+						}
+					});
+				} else {
+					loadLogin();
+					loadParkTableGuest();
+
+					
+				}
+			}
+		});
+	}
+	
+	public void loadLogin() {
+		Image image = new Image();
+		image.setUrl("images/parkfinder_logo2_small.png");
+		headerPanel.add(image);
+
+		Resources.INSTANCE.ClientParkFinder().ensureInjected();
+		
+		signInLink.setHref(loginInfo.getLoginUrl());
+		loginPanel.add(loginLabel);
+		loginPanel.add(signInLink);
+		headerPanel.setPixelSize(1280, 125);
+		headerPanel.add(fbPanel);
 		mainPanel.addNorth(headerPanel, 100);
-		mainPanel.addNorth(searchPanel, 175);
+	    mainPanel.addNorth(searchPanel, 175);
 		mainPanel.add(tlp);
 		RootLayoutPanel.get().add(mainPanel);
+	    RootLayoutPanel.get().add(loginPanel);
+
 
 		// Async load of Map API
 		Maps.loadMapsApi("", "2", false, new Runnable() {
@@ -131,7 +214,13 @@ public class ParkFinder implements EntryPoint {
 				buildMap();
 			}
 		});
-
+	}
+	
+	private void handleError(Throwable error) {
+	    Window.alert(error.getMessage());
+	    if (error instanceof NotLoggedInException) {
+	      Window.Location.replace(loginInfo.getLogoutUrl());
+	    }
 	}
 
 	public void loadParkTable() {
@@ -150,6 +239,9 @@ public class ParkFinder implements EntryPoint {
 		
 		searchPanelContents.add(searchFacilityTextBox);
 		searchPanelContents.add(searchFacilityButton);
+		searchPanelContents.add(showPreviousSearchfac);
+		searchPanelContents.add(fbLoginButton);
+
 		searchPanelContents.addStyleName("inputTextBox");
 		
 		searchPanelPark.add(searchParkTextBox);
@@ -164,7 +256,108 @@ public class ParkFinder implements EntryPoint {
 		successMsg.setVisible(false);
 
 		
+		searchPanel.add(previousSearchfac);
+		previousSearchfac.setVisible(false);
+		searchPanel.add(errorMessage);
+		searchPanel.add(successMsg);
+		searchPanel.add(facilityLabel);
+		searchPanel.add(searchPanelContents);
+		searchPanel.add(parkLabel);
+		searchPanel.add(searchPanelPark);
 		
+		tablePanel.add(parkTable);
+		tablePanel.add(lastUpdateLabel);
+
+		searchFacilityTextBox.setFocus(true);
+
+		importData();
+		
+		nbhdDropBox.addStyleDependentName("drop");
+		
+		nbhdLabel.addStyleName("nbhdlabel");
+		listPanel.add(nbhdLabel);
+		listPanel.add(nbhdDropBox);
+		nbhdDropBox.setVisibleItemCount(1);
+		searchPanelPark.add(listPanel);
+		// Add a drop box with the list types
+	    
+	    
+		searchFacilityButton.addClickHandler(new ClickHandler(){
+
+			public void onClick(ClickEvent event) {
+				facilityToSearch = searchFacilityTextBox.getText().trim();
+				searchFacilityTextBox.setFocus(true);
+					SearchFacility();
+					addSearch(facilityToSearch+"_"+nbhd);
+
+			}
+			
+		});
+		nbhdDropBox.addChangeHandler(new ChangeHandler(){
+			public void onChange(ChangeEvent event)
+			{
+				int selectIndex = nbhdDropBox.getSelectedIndex();
+				nbhd = nbhdDropBox.getValue(selectIndex);
+			}
+
+		});
+			
+		
+		searchParkButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				searchParkName = searchParkTextBox.getText().trim();
+				searchParkTextBox.setFocus(true);
+				getParkbyName();
+
+			}
+		});
+		
+		showPreviousSearchfac.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				getPreviousSearchfac();
+			}
+		});
+		fbLoginButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+			}
+		});
+
+		
+	}
+	
+	public void loadParkTableGuest() {
+		// table layout
+		
+		parkTable.setText(0, 0, "Park Name");
+		parkTable.setText(0, 1, "Neighbourhood");
+		parkTable.setText(0, 2, "Address");
+		parkTable.setText(0, 3, "Facilities");
+		parkTable.setText(0, 4, "Weekend Status");
+
+		parkTable.getRowFormatter().addStyleName(0, "parkListHeader");
+		parkTable.addStyleName("parkList");
+		parkTable.setCellPadding(10);
+
+		
+		searchPanelContents.add(searchFacilityTextBox);
+		searchPanelContents.add(searchFacilityButton);
+		searchPanelContents.add(fbLoginButton);
+		searchPanelContents.addStyleName("inputTextBox");
+		
+		searchPanelPark.add(searchParkTextBox);
+		searchPanelPark.add(searchParkButton);
+		searchPanelPark.addStyleName("inputTextBox");
+
+		searchFacilityButton.addStyleDependentName("search");
+		searchParkButton.addStyleDependentName("search");
+		errorMessage.setStyleName("errorMessage");
+		successMsg.setStyleName("successMessage");
+		errorMessage.setVisible(false);
+		successMsg.setVisible(false);
+
+		
+		searchPanel.add(errorMessage);
+		searchPanel.add(successMsg);
 		searchPanel.add(facilityLabel);
 		searchPanel.add(searchPanelContents);
 		searchPanel.add(parkLabel);
@@ -185,14 +378,16 @@ public class ParkFinder implements EntryPoint {
 		listPanel.add(nbhdLabel);
 		listPanel.add(nbhdDropBox);
 		nbhdDropBox.setVisibleItemCount(1);
-		searchPanelContents.add(listPanel);
+		searchPanelPark.add(listPanel);
 		// Add a drop box with the list types
 	    
 	    
 		searchFacilityButton.addClickHandler(new ClickHandler(){
 
 			public void onClick(ClickEvent event) {
-					SearchFacility();
+				facilityToSearch = searchFacilityTextBox.getText().trim();
+				searchFacilityTextBox.setFocus(true);
+				SearchFacility();
 			}
 			
 		});
@@ -208,11 +403,45 @@ public class ParkFinder implements EntryPoint {
 		
 		searchParkButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				searchParkName = searchParkTextBox.getText().trim();
+				searchParkTextBox.setFocus(true);
 				getParkbyName();
 			}
 		});
-
+		
+		
 	}
+	private void getPreviousSearchfac() {
+		searchService.getUserSearch(new AsyncCallback<String>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(String search) {
+				previousSearchfac.clear();
+				String temp[] = search.split(" ");
+				for(int i=0;i<3;i++)
+				{
+					previousSearchfac.addItem(temp[i]);
+				}
+				previousSearchfac.addStyleDependentName("drop");
+				previousSearchfac.setVisibleItemCount(1);
+				previousSearchfac.setVisible(true);
+				previousSearchfac.addChangeHandler(new ChangeHandler(){
+					public void onChange(ChangeEvent event){
+						int selectIndex = previousSearchfac.getSelectedIndex();
+						String theSearch = previousSearchfac.getValue(selectIndex);
+						 String newNbhd = theSearch.substring(theSearch.indexOf("_") + 1, theSearch.length());				
+						 String newFacilityToSearch = theSearch.substring(0,theSearch.indexOf("_"));
+					nbhd=	newNbhd;
+					facilityToSearch=newFacilityToSearch;
+					SearchFacility();
+					
+						}
+				});
+			}
+		});
+	}
+	
 
 	private void importData() {
 		//import parks to GWT server
@@ -261,9 +490,7 @@ private void SearchFacility() {
 		refreshTable();
 		parklist.clear();
 		facilitylist.clear();
-		facilityToSearch = searchFacilityTextBox.getText().trim();
-		searchFacilityTextBox.setFocus(true);
-			
+		
 		successMsg.setText("Getting " +facilityToSearch+ " from server...");
     	successMsg.setVisible(true);
     		
@@ -341,6 +568,17 @@ private void SearchFacility() {
 			
 		});
 }
+
+private void addSearch(String search) {
+	searchService.add(search, new AsyncCallback<Void>() {
+		public void onFailure(Throwable error) {
+			handleError(error);
+		}
+		public void onSuccess(Void ignore) {
+			System.out.println("User Info Updated");
+		}
+	});
+}
 	private void refreshTable(){
 		int row = parkTable.getRowCount();
 		for(int i=row-1;i>0;i--){
@@ -355,9 +593,7 @@ private void getParkbyName()
 	refreshTable();
 	parklist.clear();
 	facilitylist.clear();
-	searchParkName = searchParkTextBox.getText().trim();
-	searchParkTextBox.setFocus(true);
-		
+	
 	successMsg.setText("Getting " +searchParkName+ " from server...");
 	successMsg.setVisible(true);
 	parkService.getParkByName(searchParkName,nbhd, new AsyncCallback<Park[]>() {
@@ -418,7 +654,7 @@ private void showParkInTable(Park park,int row) {
 		parkTable.setText(row, 0, park.getName());
 		parkTable.setText(row, 1, park.getNeighbourhoodName());
 		parkTable.setText(row, 2, String.valueOf(park.getStreetNumber().concat(" ").concat(park.getStreetName())));	
-		final String parkId = park.getParkId();
+		final Long parkId = park.getParkId();
 		final String parkName =  park.getName();
 		Button showAreaButton = new Button("Status");
 		showAreaButton.addClickHandler(new ClickHandler(){
@@ -581,9 +817,8 @@ private void showFacility(Facility[] facilities,String parkName)
 		
 
 	}
-
 	private void updateMap(Park[] parks) {
-		
+
 		// How to handle the user's selection of a specific park in the list next to the map
 		final Park[] parksFinalCopy = parks;
 		final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
@@ -594,7 +829,7 @@ private void showFacility(Facility[] facilities,String parkName)
 		        if (selected != null) {
 		        	for (Park p: parksFinalCopy) {
 		        		if (p.getName().toUpperCase().equals(selected.toUpperCase())) {
-		        			
+
 		        			String streetNumber = p.getStreetNumber();
 		        			String streetName = p.getStreetName();
 		        			String neighbourhoodName = p.getNeighbourhoodName();
@@ -606,17 +841,17 @@ private void showFacility(Facility[] facilities,String parkName)
 		        				streetNumber = streetNumber.concat(space);
 		        				address = streetNumber.concat(streetName);
 		        			}
-		        			
+
 		        			LatLong theLatLong = convertGMDtoLatLong(p.getGoogleMapDest());
 		        			LatLng locationPoint = LatLng.newInstance(theLatLong.getLat(), theLatLong.getLong());
 		        			theMap.setCenter(locationPoint);
-		        			
+
 		        			VerticalPanel infoVerticalPanel = new VerticalPanel();
 		        			FlexTable parkInfoFlexTable = new FlexTable();
 		        			parkInfoFlexTable.setText(0, 0, selected);
 		        			parkInfoFlexTable.setText(1, 0, address);
 		        			parkInfoFlexTable.setText(2, 0, neighbourhoodName);
-		        			
+
 		        			infoVerticalPanel.add(parkInfoFlexTable);
 		        			theMap.getInfoWindow().open(theMap.getCenter(), new InfoWindowContent(infoVerticalPanel));
 		        		}
@@ -624,9 +859,9 @@ private void showFacility(Facility[] facilities,String parkName)
 		        }
 		      }
 		    });
-		    
+
 		clearMapAndList();
-		List<String> currentMapParkList = dataProvider.getList();
+		List<String> currentMapParkList = new ArrayList<String>();
 		mapParkList.setVisibleRange(0, parks.length);
 		for (Park p : parks) {
 			LatLong theLatLong = convertGMDtoLatLong(p.getGoogleMapDest());
@@ -636,14 +871,14 @@ private void showFacility(Facility[] facilities,String parkName)
 			final String neighbourhoodName = p.getNeighbourhoodName();
 			final String streetNumber = p.getStreetNumber();
 			final String streetName = p.getStreetName();
-			
+
 			currentMapParkList.add(parkName);
-			
+
 			// define options for the marker
 			MarkerOptions markerOptions = MarkerOptions.newInstance();
 			markerOptions.setClickable(true);
 			Marker theMarker = new Marker(locationPoint, markerOptions);
-			
+
 			// handle click events for the marker
 			theMarker.addMarkerClickHandler(new MarkerClickHandler() {
                 @Override
@@ -675,12 +910,23 @@ private void showFacility(Facility[] facilities,String parkName)
                 }
 
         });
-			
-			
+
+			dataProvider.setList(currentMapParkList);
+			dataProvider.refresh();
 			theMap.addOverlay(theMarker);
+
+			@SuppressWarnings("unchecked")
+			SingleSelectionModel<String> listSelectionModel = (SingleSelectionModel<String>) mapParkList.getSelectionModel();
+			for (Park park: parks) {
+				if (park.getName().toUpperCase().equals(searchParkName.toUpperCase())) {
+					listSelectionModel.setSelected(park.getName(), true);
+				}
+
+			}
 		}
 
 	}
+
 
 
 	private void displayAllInMap() {
