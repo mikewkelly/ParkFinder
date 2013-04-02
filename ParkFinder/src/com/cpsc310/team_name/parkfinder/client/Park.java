@@ -12,7 +12,6 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable(identityType = IdentityType.APPLICATION,detachable="true")
 
 public class Park implements Serializable{
-	
 
 	@PrimaryKey
 	private Long parkId;

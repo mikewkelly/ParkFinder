@@ -23,7 +23,6 @@ public class Facility implements Serializable{
 		// default constructor
 	}
 
-
 	public Facility(Long aParkId, String aFacilityType, String aFacilityId, String aFacilityCount) {
 		parkId = aParkId;
 		facility = aFacilityType;

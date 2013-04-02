@@ -25,6 +25,7 @@ import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.control.MapTypeControl;
 import com.google.gwt.maps.client.event.MarkerClickHandler;
+import com.google.gwt.maps.client.event.MarkerClickHandler.MarkerClickEvent;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.MarkerOptions;
@@ -823,8 +824,8 @@ private void showFacility(Facility[] facilities,String parkName)
 		
 
 	}
-	private void updateMap(Park[] parks) {
-
+private void updateMap(Park[] parks) {
+		
 		// How to handle the user's selection of a specific park in the list next to the map
 		final Park[] parksFinalCopy = parks;
 		final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
@@ -835,7 +836,7 @@ private void showFacility(Facility[] facilities,String parkName)
 		        if (selected != null) {
 		        	for (Park p: parksFinalCopy) {
 		        		if (p.getName().toUpperCase().equals(selected.toUpperCase())) {
-
+		        			
 		        			String streetNumber = p.getStreetNumber();
 		        			String streetName = p.getStreetName();
 		        			String neighbourhoodName = p.getNeighbourhoodName();
@@ -847,17 +848,17 @@ private void showFacility(Facility[] facilities,String parkName)
 		        				streetNumber = streetNumber.concat(space);
 		        				address = streetNumber.concat(streetName);
 		        			}
-
+		        			
 		        			LatLong theLatLong = convertGMDtoLatLong(p.getGoogleMapDest());
 		        			LatLng locationPoint = LatLng.newInstance(theLatLong.getLat(), theLatLong.getLong());
 		        			theMap.setCenter(locationPoint);
-
+		        			
 		        			VerticalPanel infoVerticalPanel = new VerticalPanel();
 		        			FlexTable parkInfoFlexTable = new FlexTable();
 		        			parkInfoFlexTable.setText(0, 0, selected);
 		        			parkInfoFlexTable.setText(1, 0, address);
 		        			parkInfoFlexTable.setText(2, 0, neighbourhoodName);
-
+		        			
 		        			infoVerticalPanel.add(parkInfoFlexTable);
 		        			theMap.getInfoWindow().open(theMap.getCenter(), new InfoWindowContent(infoVerticalPanel));
 		        		}
@@ -865,7 +866,7 @@ private void showFacility(Facility[] facilities,String parkName)
 		        }
 		      }
 		    });
-
+		    
 		clearMapAndList();
 		List<String> currentMapParkList = new ArrayList<String>();
 		mapParkList.setVisibleRange(0, parks.length);
@@ -877,14 +878,14 @@ private void showFacility(Facility[] facilities,String parkName)
 			final String neighbourhoodName = p.getNeighbourhoodName();
 			final String streetNumber = p.getStreetNumber();
 			final String streetName = p.getStreetName();
-
+			
 			currentMapParkList.add(parkName);
-
+			
 			// define options for the marker
 			MarkerOptions markerOptions = MarkerOptions.newInstance();
 			markerOptions.setClickable(true);
 			Marker theMarker = new Marker(locationPoint, markerOptions);
-
+			
 			// handle click events for the marker
 			theMarker.addMarkerClickHandler(new MarkerClickHandler() {
                 @Override
@@ -916,22 +917,26 @@ private void showFacility(Facility[] facilities,String parkName)
                 }
 
         });
+			
 
-			dataProvider.setList(currentMapParkList);
-			dataProvider.refresh();
 			theMap.addOverlay(theMarker);
-
-			@SuppressWarnings("unchecked")
-			SingleSelectionModel<String> listSelectionModel = (SingleSelectionModel<String>) mapParkList.getSelectionModel();
-			for (Park park: parks) {
-				if (park.getName().toUpperCase().equals(searchParkName.toUpperCase())) {
-					listSelectionModel.setSelected(park.getName(), true);
-				}
-
+			
+			
+		}
+		dataProvider.setList(currentMapParkList);
+		dataProvider.refresh();
+		
+		@SuppressWarnings("unchecked")
+		SingleSelectionModel<String> listSelectionModel = (SingleSelectionModel<String>) mapParkList.getSelectionModel();
+		for (Park park: parks) {
+			if (park.getName().toUpperCase().equals(searchParkName.toUpperCase())) {
+				listSelectionModel.setSelected(park.getName(), true);
 			}
+			
 		}
 
 	}
+
 
 
 
