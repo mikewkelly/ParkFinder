@@ -158,7 +158,8 @@ public class ParkFinder implements EntryPoint {
 					Image image = new Image();
 					image.setUrl("images/parkfinder_logo2_small.png");
 					headerPanel.add(image);
-
+					//TODO
+					//Here is where I add facebook panel, does not display 
 					Resources.INSTANCE.ClientParkFinder().ensureInjected();
 					loadParkTable();
 					headerPanel.setPixelSize(1280, 125);
@@ -204,6 +205,9 @@ public class ParkFinder implements EntryPoint {
 		mainPanel.addNorth(headerPanel, 100);
 	    mainPanel.addNorth(searchPanel, 175);
 		mainPanel.add(tlp);
+		//TODO
+		//this .get()method makes singlton. only loginPanel is functioning even if
+		//the mainPanel and loginPanel both added.
 		RootLayoutPanel.get().add(mainPanel);
 	    RootLayoutPanel.get().add(loginPanel);
 
@@ -319,12 +323,14 @@ public class ParkFinder implements EntryPoint {
 		});
 		fbLoginButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				//TODO
+				//facebookAuth();
 			}
 		});
 
 		
 	}
-	
+	//this loadParkTable() do not load previous search function 
 	public void loadParkTableGuest() {
 		// table layout
 		
@@ -977,6 +983,11 @@ private void showFacility(Facility[] facilities,String parkName)
 				Double.parseDouble(theLong));
 		return theLatLong;
 	}
+	//TODO
+	//the method below is an empty method and google appengin cannot deploy the app with 
+	//this method, ask Kerry what happen
+	
+	/*public static native void facebookAuth();*/
 
 }
 	
